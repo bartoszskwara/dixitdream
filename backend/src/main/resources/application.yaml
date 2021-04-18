@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/dixitdream
+  jpa:
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 5242880
+      max-request-size: 5242880
+
+frontend:
+  url: http://localhost:3000
+
+settings:
+  uploadInfo:
+    maxSize:
+      size: 5
+    extensions: .png,.jpg
+    ratio: '7:11'
+
+aws:
+  s3Url: s3.eu-central-1.amazonaws.com
+  accessKey: AKIAZHJC4VWHZKAE4ZJT
+  secretKey: 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
+  bucketName: barytonn-paintings
