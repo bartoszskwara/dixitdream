@@ -1,11 +1,11 @@
-import React, {useCallback, useContext, useEffect, useState} from "react";
+import React, { useContext, useState} from "react";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import SearchIcon from '@material-ui/icons/Search';
-import Tiles from "components/Painting/Tiles";
+import InfiniteTiles from "components/Painting/InfiniteTiles";
 import TagsInput from "../Tags/TagsInput";
-import useDebounce from "../../hooks/useDebounce";
-import {Api, apiCall} from "../../api/Api";
+import useDebounce from "hooks/useDebounce";
+import {Api, apiCall} from "api/Api";
 
 const useStyles = makeStyles(theme => ({
     explore: {
@@ -23,33 +23,11 @@ const Explore = ({}) => {
         query: "",
         tags: []
     });
-    const [page, setPage] = useState(0);
     const [shouldFetchMore, setShouldFetchMore] = useState(true);
-    const [error, setError] = useState(false);
+    const [error, setError] = useState(null);
     const [paintings, setPaintings] = useState([]);
-    const [lastFetchedPaintingId, setLastFetchedPaintingId] = useState(undefined);
+    const [paintingsLoading, setPaintingsLoading] = useState(false);
     const searchFilterDebounced = useDebounce(searchFilter, 300);
-
-    useEffect(() => {
-        fetchPaintings({ query: searchFilterDebounced.query, tags: searchFilterDebounced.tags });
-    }, [searchFilterDebounced]);
-
-    useEffect(() => {
-        if (lastFetchedPaintingId > 0 && paintings.length) {
-            const lastPaintingId = paintings.length ? paintings[paintings.length - 1].id : undefined;
-            fetchPaintings({ query: searchFilterDebounced.query, tags: searchFilterDebounced.tags, next: true, lastPaintingId });
-        } else {
-            fetchPaintings({ query: searchFilterDebounced.query, tags: searchFilterDebounced.tags });
-        }
-    }, [lastFetchedPaintingId]);
-
-    useEffect(() => {
-        if (page > 0 && paintings.length) {
-            setLastFetchedPaintingId(paintings[paintings.length - 1].id);
-        } else {
-            setLastFetchedPaintingId(undefined);
-        }
-    }, [page]);
 
     const onTagAdded = (tag) => {
         setSearchFilter(filter => ({
@@ -64,6 +42,7 @@ const Explore = ({}) => {
     }));
 
     const fetchPaintings = async ({ query, tags, next = false, lastPaintingId }) => {
+        setPaintingsLoading(true);
         const data = await apiCall(Api.getPaintings, {
             postData: {
                 ...(query ? { query } : {} ),
@@ -72,12 +51,13 @@ const Explore = ({}) => {
                 ...(next && lastPaintingId ? { lastPaintingId } : {} )
             }
         });
-        if (data) {
+        if (!data.error) {
             setPaintings(next ? items => ([...items, ...data.content]) : data.content);
             setShouldFetchMore(data.content.length === LIMIT);
         } else {
-            setError(true);
+            setError(data.error);
         }
+        setPaintingsLoading(false);
     };
 
     return <div id="explore-root" className={classes.explore}>
@@ -89,13 +69,14 @@ const Explore = ({}) => {
             onInputChange={(event) => setSearchFilter(filter => ({ ...filter, query: event.target.value }))}
             inputAdornmentIcon={<SearchIcon />}
         />
-        <Tiles
+        <InfiniteTiles
             items={paintings}
-            fetchMore={() => setPage(p => (p + 1))}
-            refresh={() => setPage(0)}
             hasMore={shouldFetchMore && !error}
             error={error}
             scrollTarget="explore-root"
+            filter={searchFilterDebounced}
+            fetchPaintings={fetchPaintings}
+            loading={paintingsLoading}
         />
     </div>;
 };

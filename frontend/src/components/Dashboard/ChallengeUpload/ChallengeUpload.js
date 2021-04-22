@@ -58,7 +58,7 @@ const ChallengeUpload = ({ loading, error, challenge }) => {
     return (
         <div className={classes.root}>
             {loading && <Loader />}
-            {error && <div className={classes.error}>Challenge is not available due to unexpected error.</div>}
+            {error && <div className={classes.error}>{error}</div>}
             {(!loading && !error) && <>
                 <Dropzone
                     disabled={challengeEnded}

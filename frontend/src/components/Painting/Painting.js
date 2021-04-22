@@ -8,6 +8,7 @@ import Loader from "../Loader/Loader";
 import NotFound from "../NotFound/NotFound";
 import Tags from "../Tags/Tags";
 import Card from "../Card/Card";
+import PaintingContext from "../contexts/PaintingContext";
 
 const useStyles = makeStyles(theme => ({
     paintingRoot: {
@@ -22,10 +23,14 @@ const useStyles = makeStyles(theme => ({
         minWidth: "38vh"
     },
     paintingTile: {
-        width: "100%"
+        width: "100%",
+        border: "none",
+        padding: 0,
+        margin: 0
     },
     bottomContent: {
-        flex: 1
+        flex: 1,
+        marginTop: 5
     },
     title: {
         fontSize: 20
@@ -51,6 +56,17 @@ const Painting = () => {
         } else {
             setPainting(data);
             setLoading(false);
+            markPaintingAsVisited();
+        }
+    }
+
+    const markPaintingAsVisited = async () => {
+        const data = await apiCall(Api.markPaintingAsVisited, { pathParams: { id: paintingId } });
+        if(!data.error) {
+            setPainting(p => ({
+                ...p,
+                visits: data.newVisit ? p.visits + 1 : p.visits
+            }));
         }
     }
 
@@ -62,30 +78,31 @@ const Painting = () => {
 
     const tags = painting ? painting.tags.map(t => ({ label: t })) : [];
 
-    return <div className={classes.paintingRoot}>
-        {loading && <Loader />}
-        {error && <NotFound />}
-        {(!loading && painting) && <Card>
-            <div className={classes.paintingContainer}>
-                <PaintingTile
-                    className={classes.paintingTile}
-                    author={painting.profile.username}
-                    id={painting.id}
-                    src={painting.url}
-                    avatar={painting.avatar}
-                    avatarVariant="outside"
-                    likes={painting.likes || 0}
-                    visits={painting.visits || 0}
-                    liked={painting.liked || false}
-                />
+    return (
+        <PaintingContext.Provider value={{
+            paintingContext: painting,
+            setPaintingContext: setPainting
+        }} >
+            <div className={classes.paintingRoot}>
+                {loading && <Loader />}
+                {error && <NotFound />}
+                {(!loading && painting) && <Card>
+                    <div className={classes.paintingContainer}>
+                        <PaintingTile
+                            className={classes.paintingTile}
+                            avatarVariant="outside"
+                            showOptions
+                        />
+                    </div>
+                    <div className={classes.bottomContent}>
+                        <Tags tags={tags} disabled={true} />
+                        <p className={classes.title}>{painting.title}</p>
+                        <p className={classes.description}>{painting.description}</p>
+                    </div>
+                </Card>}
             </div>
-            <div className={classes.bottomContent}>
-                <Tags tags={tags} disabled={true} />
-                <p className={classes.title}>{painting.title}</p>
-                <p className={classes.description}>{painting.description}</p>
-            </div>
-        </Card>}
-    </div>;
+        </PaintingContext.Provider>
+    )
 };
 
 export default Painting;

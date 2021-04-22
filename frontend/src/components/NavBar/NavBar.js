@@ -7,13 +7,14 @@ import {ReactComponent as SearchIcon } from "assets/images/search3.svg";
 import {ReactComponent as UserIcon } from "assets/images/user.svg";
 import {ReactComponent as AddIcon } from "assets/images/add2.svg";
 import {useHistory} from "react-router";
+import UserContext from "../contexts/UserContext";
 
 const useStyles = makeStyles(theme => ({
     root: {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        padding: "0 30px"
+        padding: "0 15px"
     },
     icon: {
         width: 40,
@@ -26,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 const NavBar = () => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const history = useHistory();
+    const { id } = useContext(UserContext);
     return (
         <div className={classes.root}>
             <IconButton onClick={() => history.push("")}>
@@ -37,7 +39,7 @@ const NavBar = () => {
             <IconButton onClick={() => history.push("/upload")}>
                 <AddIcon className={classes.icon}/>
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => history.push(`/profile/${id}`)}>
                 <UserIcon className={classes.icon}/>
             </IconButton>
         </div>

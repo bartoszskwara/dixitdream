@@ -44,6 +44,18 @@ export const Api = {
         url: "/tag",
         method: "get",
         responseType: "json"
+    },
+    deletePainting: {
+        url: "/painting/{id}",
+        method: "delete"
+    },
+    toggleLikePainting: {
+        url: "/painting/{id}/like",
+        method: "put"
+    },
+    markPaintingAsVisited: {
+        url: "/painting/{id}/visit",
+        method: "put"
     }
 };
 
@@ -81,6 +93,6 @@ export const apiCall = async (api, { pathParams, urlParams, postData, isFormData
         });
         return response ? response.data : {};
     } catch(error) {
-        return error.response ? error.response.data : { error: "Unexpected error." };
+        return error.response && error.response.data ? error.response.data : { error: "Unexpected error." };
     }
 };

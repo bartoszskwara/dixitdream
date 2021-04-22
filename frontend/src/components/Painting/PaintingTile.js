@@ -1,25 +1,44 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import VisibilityIcon from '@material-ui/icons/Visibility';
 import cn from "classnames";
 import Loader from "../Loader/Loader";
-import {useHistory} from "react-router";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import PaintingTileBottomPanel from "./PaintingTileBottomPanel";
+import PaintingTileHeader from "./PaintingTileHeader";
+import PaintingContext from "../contexts/PaintingContext";
 
 const useStyles = makeStyles(theme => ({
-    paintingTile: {
+    paintingTileContainer: {
+        padding: 5,
+        margin: 3,
+        border: appTheme => `1px solid ${appTheme.colors.primary100}`,
+        borderRadius: 4,
         display: "flex",
         flex: 1,
         flexDirection: "column",
+        marginBottom: 5
+    },
+    paintingTile: {
         position: "relative",
-        marginBottom: 5,
+        display: "flex",
+        flex: 1
+    },
+    paintingTileDefault: {
         minWidth: 120
+    },
+    paintingTileBig: {
+        minWidth: 250
+    },
+    paintingTileLarge: {
+        minWidth: 350
     },
     preview: {
         flex: 100,
-        width: "100%"
+        width: "100%",
+        display: "block",
+        borderTopLeftRadius: 4,
+        borderTopRightRadius: 4
     },
     avatarContainer: {
         display: "flex",
@@ -46,34 +65,6 @@ const useStyles = makeStyles(theme => ({
         border: appTheme => `2px solid ${appTheme.colors.secondary700}`,
         marginRight: 10
     },
-    info: {
-        backgroundColor: props => props.colors.primary400,
-        color: props => props.colors.contrast100,
-        fontSize: 16,
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flex: 1,
-        padding: 4,
-        height: 30
-    },
-    section: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        margin: "0 2px 0 2px"
-    },
-    icon: {
-        width: 15,
-        height: 15,
-        fill: props => props.colors.contrast100,
-        marginRight: 5
-    },
-    liked: {
-        fill: props => props.colors.like,
-    },
     hidden: {
         display: "none"
     },
@@ -82,53 +73,63 @@ const useStyles = makeStyles(theme => ({
     },
     clickable: {
         cursor: "pointer"
+    },
+    header: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
+    options: {
+        marginBottom: 10
     }
 }));
 
-const PaintingTile = ({ className, id, src, avatar, avatarVariant = "inside", likes, visits, liked, author, onClick, onLoad = () => {} }) => {
+const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = () => {}, showOptions }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
+    const isBigScreen = useMediaQuery("(min-width:800px) and (max-width:1500px)");
+    const isLargeScreen = useMediaQuery("(min-width:1500px)");
     const [loading, setLoading] = useState(true);
+    const { paintingContext: { id, url: src, avatar, profile: author } } = useContext(PaintingContext);
 
-    return <div className={cn(classes.paintingTile, className)}>
-        <div className={cn(classes.avatarContainer, {
-            [classes.avatarInsideContainer]: avatarVariant === "inside",
-            [classes.avatarOutsideContainer]: avatarVariant === "outside"
-        })}>
-            <Avatar
-                alt={`painting-${id}`}
-                src={avatar}
-                className={cn(classes.avatar, {
-                    [classes.imgInside]: avatarVariant === "inside",
-                    [classes.imgOutside]: avatarVariant === "outside"
-                })}
-            />
-            {author && <p className={classes.author}>{author}</p>}
-        </div>
-        {loading && <Loader />}
-        <img
-            alt="preview"
-            src={src}
-            className={cn(classes.preview, {
-                [classes.hidden]: loading,
-                [classes.clickable]: !!onClick
-            })}
-            onLoad={() => {
-                setLoading(false);
-                onLoad();
-            }}
-            onClick={onClick || (() => {})}
-        />
-        <div className={classes.info}>
-            <div className={classes.section}>
-                <FavoriteIcon className={cn(classes.icon, { [classes.liked]: liked })} />
-                <div>{likes}</div>
+    return (
+        <div className={cn(classes.paintingTileContainer, className)}>
+            <div
+                className={cn(
+                    classes.paintingTile, {
+                        [classes.paintingTileDefault]: !isBigScreen && !isLargeScreen,
+                        [classes.paintingTileBig]: isBigScreen,
+                        [classes.paintingTileLarge]: isLargeScreen
+                    }
+                )}
+            >
+                {loading && <Loader />}
+                <div style={ { display: loading ? "none" : "block" } }>
+                    <PaintingTileHeader
+                        paintingId={id}
+                        classes={classes}
+                        avatar={avatar}
+                        avatarVariant={avatarVariant}
+                        author={author}
+                        showOptions={showOptions}
+                    />
+                    <img
+                        alt="preview"
+                        src={src}
+                        className={cn(classes.preview, {
+                            [classes.hidden]: loading,
+                            [classes.clickable]: !!onClick
+                        })}
+                        onLoad={() => {
+                            setLoading(false);
+                            onLoad();
+                        }}
+                        onClick={onClick || (() => {})}
+                    />
+                    <PaintingTileBottomPanel />
+                </div>
             </div>
-            <div className={classes.section}>
-                <VisibilityIcon className={classes.icon} />
-                <div>{visits}</div>
-            </div>
         </div>
-    </div>;
+    );
 };
 
 export default PaintingTile;

@@ -18,7 +18,9 @@ public class PaintingDto {
     private final String title;
     private final String description;
     private final ProfileDto profile;
-    private final Long likes;
-    private final Long visits;
+    private final Integer likes;
+    private final boolean liked;
+    private final Integer visits;
     private final Set<String> tags;
+    private final boolean removable;
 }

@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,16 +36,22 @@ public class Profile {
     private String email;
     private String description;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "followers",
-            joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+            joinColumns={@JoinColumn(name="profile_id", referencedColumnName="id")},
             inverseJoinColumns={@JoinColumn(name="follower_id", referencedColumnName="id")}
     )
     private Set<Profile> followers = new HashSet<>();
 
-    @ManyToMany(mappedBy = "followers", cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "followers", cascade = CascadeType.PERSIST)
     private Set<Profile> following = new HashSet<>();
 
-    @OneToMany(mappedBy = "profile")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "profile")
     private Set<Painting> paintings = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "likes", cascade = CascadeType.PERSIST)
+    private Set<Painting> likedPaintings = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "visits", cascade = CascadeType.PERSIST)
+    private Set<Painting> visitedPaintings = new HashSet<>();
 }

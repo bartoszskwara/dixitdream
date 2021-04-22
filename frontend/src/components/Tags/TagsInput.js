@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const LIMIT = 6;
 
-const TagsInput = ({ className, label, tags, onTagAdded, onTagDelete, onBlur, error, disabled, position, onInputChange, inputAdornmentIcon }) => {
+const TagsInput = ({ className, label, tags, onTagAdded, onTagDelete, onBlur, error, disabled, position, onInputChange, inputAdornmentIcon, setInputRef }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [tagsInputValue, setTagsInputValue] = useState("");
     const [options, setOptions] = useState([]);
@@ -64,7 +64,7 @@ const TagsInput = ({ className, label, tags, onTagAdded, onTagDelete, onBlur, er
                 ...(next ? { lastCount, lastName } : {} ),
             }
         });
-        if (data) {
+        if (!data.error) {
             setOptions(next ? items => ([...items, ...data.content]) : data.content);
             setShouldFetchMore(data.content.length === LIMIT);
         }
@@ -110,6 +110,7 @@ const TagsInput = ({ className, label, tags, onTagAdded, onTagDelete, onBlur, er
                     <div className={classes.suggestionCount}>{option.count}</div>
                 </div>)
             }
+            setInputRef={setInputRef}
         />
     </div>;
 };

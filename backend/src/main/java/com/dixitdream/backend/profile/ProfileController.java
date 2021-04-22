@@ -1,6 +1,7 @@
 package com.dixitdream.backend.profile;
 
 import com.dixitdream.backend.dao.entity.Profile;
+import com.dixitdream.backend.dao.projection.ProfileInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +25,12 @@ public class ProfileController {
     @GetMapping("/current")
     public ResponseEntity<ProfileDto> getCurrentProfile() {
         try {
-            Profile profile = profileService.getCurrentProfile();
+            ProfileInfoDto profile = profileService.getCurrentProfileInfo();
             ProfileDto dto = ProfileDto.builder()
                     .id(profile.getId())
                     .username(profile.getUsername())
-                    .followers(profile.getFollowers().size())
-                    .paintings(profile.getPaintings().size())
+                    .followers(profile.getFollowers())
+                    .paintings(profile.getPaintings())
                     .build();
             return ResponseEntity.ok(dto);
         } catch(IllegalArgumentException e) {

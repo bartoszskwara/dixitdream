@@ -1,6 +1,7 @@
 package com.dixitdream.backend.profile;
 
 import com.dixitdream.backend.dao.entity.Profile;
+import com.dixitdream.backend.dao.projection.ProfileInfoDto;
 import com.dixitdream.backend.dao.repository.ProfileRepository;
 import com.dixitdream.backend.infrastructure.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,14 @@ public class ProfileService {
         return profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Profile not found."));
     }
 
+    public ProfileInfoDto getCurrentProfileInfo() {
+        Long id = profileRepository.findAll().stream().findAny().orElseThrow(() -> new IllegalArgumentException("No profile.")).getId();
+        return profileRepository.findProfileById(id);
+    }
+
     public Profile getCurrentProfile() {
-        return profileRepository.findAll().stream().findAny().orElseThrow(() -> new IllegalArgumentException("No profile."));
+        Long id = profileRepository.findAll().stream().findAny().orElseThrow(() -> new IllegalArgumentException("No profile.")).getId();
+        return profileRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No profile."));
     }
 
     public Profile createProfile(NewProfileDto profileDto) {

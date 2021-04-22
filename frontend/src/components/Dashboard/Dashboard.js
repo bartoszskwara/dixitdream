@@ -1,12 +1,12 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, { useContext, useEffect, useState, useMemo } from 'react'
 import { ThemeContext } from 'components/themes'
 import { makeStyles } from '@material-ui/core/styles';
 import ChallengeUpload from "./ChallengeUpload/ChallengeUpload";
-import Tiles from "../Painting/Tiles";
-import {Api, apiCall} from "../../api/Api";
+import InfiniteTiles from "components/Painting/InfiniteTiles";
+import {Api, apiCall} from "api/Api";
 import ProfileSummary from "components/Profile/ProfileSummary";
 import {useHistory} from "react-router";
-import UserContext from "../contexts/UserContext";
+import UserContext from "components/contexts/UserContext";
 
 const useStyles = makeStyles(theme => ({
     dashboardRoot: {
@@ -23,17 +23,21 @@ const LIMIT = 2;
 const Dashboard = () => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [paintings, setPaintings] = useState([]);
-    const [paintingsLoadingError, setPaintingsLoadingError] = useState(false);
-    const [challengeLoading, setChallengeLoading] = useState(false);
-    const [challengeLoadingError, setChallengeLoadingError] = useState(false);
     const [challenge, setChallenge] = useState(null);
-    const [page, setPage] = useState(0);
+    const [challengeLoading, setChallengeLoading] = useState(false);
+    const [challengeLoadingError, setChallengeLoadingError] = useState(null);
+    const [paintingsLoading, setPaintingsLoading] = useState(false);
+    const [paintingsLoadingError, setPaintingsLoadingError] = useState(false);
     const [shouldFetchMore, setShouldFetchMore] = useState(true);
     const history = useHistory();
     const { id: profileId } = useContext(UserContext);
-    const [lastFetchedPaintingId, setLastFetchedPaintingId] = useState(undefined);
+
+    useEffect(() => {
+        fetchChallengeData();
+    }, []);
 
     const fetchChallengePaintings = async ({ challengeId, next, lastPaintingId}) => {
+        setPaintingsLoading(true);
         const data = await apiCall(Api.getPaintings, {
             postData: {
                 challengeId,
@@ -47,6 +51,7 @@ const Dashboard = () => {
         } else {
             setPaintingsLoadingError(true);
         }
+        setPaintingsLoading(false);
     }
 
     const fetchChallengeData = async () => {
@@ -57,61 +62,34 @@ const Dashboard = () => {
             setChallengeLoading(false);
         } else {
             setChallengeLoading(false);
-            setChallengeLoadingError(true);
+            setChallengeLoadingError(data.error);
         }
     }
 
-    useEffect(() => {
-        fetchChallengeData();
-    }, []);
-
-    useEffect(() => {
-        if(challenge) {
-            fetchChallengePaintings({ challengeId: challenge.id });
-        }
-    }, [challenge]);
-
-    useEffect(() => {
-        if (!challenge) {
-            return;
-        }
-        if (lastFetchedPaintingId && paintings.length) {
-            fetchChallengePaintings({  challengeId: challenge.id, next: true, lastPaintingId: lastFetchedPaintingId });
-        } else {
-            fetchChallengePaintings({ challengeId: challenge.id });
-        }
-    }, [lastFetchedPaintingId]);
-
-    useEffect(() => {
-        if (page > 0 && paintings.length) {
-            setLastFetchedPaintingId(paintings[paintings.length - 1].id);
-        } else {
-            setLastFetchedPaintingId(undefined);
-        }
-    }, [page]);
+    const filter = useMemo(() => (challenge ? { challengeId: challenge.id } : undefined), [challenge]);
 
     return (
         <div id="dashboard-root" className={classes.dashboardRoot}>
             <ProfileSummary
                 onClick={() => history.push(`/profile/${profileId}`)}
             />
-            {challenge && <>
-                <ChallengeUpload
-                    challenge={challenge}
-                    loading={challengeLoading}
-                    error={challengeLoadingError}
-                />
-                <div className={classes.tiles}>
-                    <Tiles
-                        items={paintings}
-                        fetchMore={() => setPage(p => (p + 1))}
-                        refresh={() => setPage(0)}
-                        hasMore={shouldFetchMore && !paintingsLoadingError}
-                        error={paintingsLoadingError}
-                        scrollTarget="dashboard-root"
-                    />
-                </div>
-            </>}
+            <ChallengeUpload
+                challenge={challenge}
+                loading={challengeLoading}
+                error={challengeLoadingError}
+            />
+            {challenge &&
+                <InfiniteTiles
+                    className={classes.tiles}
+                    items={paintings}
+                    fetchPaintings={fetchChallengePaintings}
+                    filter={filter}
+                    filterRequired={true}
+                    hasMore={shouldFetchMore && !paintingsLoadingError}
+                    error={paintingsLoadingError}
+                    scrollTarget="dashboard-root"
+                    loading={paintingsLoading}
+                />}
         </div>
     );
 }

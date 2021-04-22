@@ -3,6 +3,7 @@ package com.dixitdream.backend.painting;
 import com.dixitdream.backend.dao.entity.Challenge;
 import com.dixitdream.backend.dao.entity.Painting;
 import com.dixitdream.backend.dao.entity.Profile;
+import com.dixitdream.backend.dao.projection.ProfileInfoDto;
 import com.dixitdream.backend.dao.repository.ChallengeRepository;
 import com.dixitdream.backend.dao.repository.PaintingRepository;
 import com.dixitdream.backend.infrastructure.exception.ResourceNotFoundException;
@@ -33,7 +34,7 @@ public class PaintingService extends AmazonS3Service {
     private final ChallengeRepository challengeRepository;
 
     public Painting getPainting(Long paintingId) {
-        return paintingRepository.findById(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
+        return paintingRepository.findByIdWithDetails(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
     }
 
     public List<Painting> getPaintings(String query, int limit, Long lastPaintingId, Collection<String> tags, Long challengeId, Long profileId) {
@@ -41,8 +42,8 @@ public class PaintingService extends AmazonS3Service {
     }
 
     public String uploadPainting(String title, String description, Set<String> tags, Long challengeId, MultipartFile multipartFile) {
-        Profile profile = profileService.getCurrentProfile();
-        String filePath = uploadFile(multipartFile, profile);
+        ProfileInfoDto profile = profileService.getCurrentProfileInfo();
+        String filePath = uploadFile(multipartFile, profile.getId());
 
         Challenge challenge = challengeId != null ? challengeRepository.findById(challengeId).orElse(null) : null;
         Painting painting = new Painting();
@@ -65,10 +66,32 @@ public class PaintingService extends AmazonS3Service {
         deleteObject(filePath);
     }
 
-    private String uploadFile(MultipartFile multipartFile, Profile profile) {
+    public void toggleLikePainting(Long paintingId) {
+        Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new IllegalArgumentException("Painting not found"));
+        Profile currentProfile = profileService.getCurrentProfile();
+        if(!painting.getLikes().contains(currentProfile)) {
+            painting.addLike(currentProfile);
+        } else {
+            painting.removeLike(currentProfile);
+        }
+        paintingRepository.save(painting);
+    }
+
+    public boolean visitPainting(Long paintingId) {
+        Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new IllegalArgumentException("Painting not found"));
+        Profile currentProfile = profileService.getCurrentProfile();
+        if(!painting.getVisits().contains(currentProfile)) {
+            painting.addVisit(currentProfile);
+            paintingRepository.save(painting);
+            return true;
+        }
+        return false;
+    }
+
+    private String uploadFile(MultipartFile multipartFile, Long id) {
         try {
             File file = convertMultiPartToFile(multipartFile);
-            String filePath = getFilePath(profile.getId());
+            String filePath = getFilePath(id);
             uploadFileTos3bucket(filePath, file);
             file.delete();
             return filePath;

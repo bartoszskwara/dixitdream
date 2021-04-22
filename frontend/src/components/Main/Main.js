@@ -4,6 +4,8 @@ import {themes, muiThemeProvider, ThemeContext} from "components/themes";
 import UserContext from "components/contexts/UserContext";
 import SettingsContext from "components/contexts/SettingsContext";
 import UploadContext from "components/contexts/UploadContext";
+import AlertContext from "components/contexts/AlertContext";
+import GlobalLoadingContext from "components/contexts/GlobalLoadingContext";
 import {makeStyles, ThemeProvider} from "@material-ui/core"
 import cn from 'classnames';
 import {Redirect, Route, Switch} from "react-router";
@@ -15,34 +17,35 @@ import Explore from "components/Explore/Explore";
 import { Api, apiCall } from "api/Api";
 import Painting from "components/Painting/Painting";
 import Profile from "components/Profile/Profile";
+import Alert from "../Alert/Alert";
+import Loader from "../Loader/Loader";
+import UserContextProvider from "./UserContextProvider";
+import UploadContextProvider from "./UploadContextProvider";
 
 const MainWrapper = () => {
     const [theme, setTheme] = useState(themes.light);
     const [muiTheme, setMuiTheme] = useState(muiThemeProvider(theme));
-    const [userData, setUserData] = useState(UserContext);
     const [settings, setSettings] = useState(SettingsContext);
-    const [currentUploadFile, setCurrentUploadFile] = useState(null);
-    const [currentUploadChallengeData, setCurrentUploadChallengeData] = useState({});
-    const [currentUploadFirstAttempt, setCurrentUploadFirstAttempt] = useState(true);
-    const [currentUploadFileBase64, setCurrentUploadFileBase64] = useState(null);
-
-    const fetchUserData = async () => {
-        setUserData(u => ({...u, loading: true}));
-        const userDataResponse = await apiCall(Api.getCurrentProfile);
-        setUserData(userDataResponse);
-        setUserData(u => ({...u, loading: false, error: false}));
-    }
+    const [globalLoading, setGlobalLoading] = useState(false);
+    const [alert, setAlert] = useState({
+        severity: undefined,
+        message: undefined,
+        onClose: undefined,
+        visible: false
+    });
 
     const fetchSettings = async () => {
         setSettings(u => ({...u, loading: true}));
         const settingsData = await apiCall(Api.getSettings);
-        setSettings(settingsData);
-        setSettings(u => ({...u, loading: false, error: false}));
+        if(!settingsData.error) {
+            setSettings({...settingsData, loading: false, error: false });
+        } else {
+            setSettings({ loading: false, error: true });
+        }
     }
 
     useEffect(() => {
-        fetchUserData().catch(err => setUserData(u => ({...u, loading: false, error: true})));
-        fetchSettings().catch(err => setSettings(u => ({...u, loading: false, error: true})));
+        fetchSettings();
     }, []);
 
     const toggleTheme = () => {
@@ -54,40 +57,28 @@ const MainWrapper = () => {
     }
 
     return (
-        <ThemeContext.Provider value={{
-            theme,
-            toggleTheme
-        }}>
-            <UserContext.Provider value={{
-                ...userData,
-                refresh: fetchUserData
-            }}>
-                <SettingsContext.Provider value={settings} >
-                    <UploadContext.Provider
-                        value={{
-                            file: currentUploadFile,
-                            setFile: setCurrentUploadFile,
-                            challengeData: currentUploadChallengeData,
-                            setChallengeData: setCurrentUploadChallengeData,
-                            firstAttempt: currentUploadFirstAttempt,
-                            setFirstAttempt: setCurrentUploadFirstAttempt,
-                            fileBase64: currentUploadFileBase64,
-                            setFileBase64: setCurrentUploadFileBase64
-                        }}
-                    >
-                        <ThemeProvider theme={muiTheme}>
-                            <CssBaseline />
-                            <Main toggleTheme={toggleTheme} />
-                        </ThemeProvider>
-                    </UploadContext.Provider>
-                </SettingsContext.Provider>
-            </UserContext.Provider>
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+            <UserContextProvider>
+                <GlobalLoadingContext.Provider value={{ globalLoading, setGlobalLoading }} >
+                    <AlertContext.Provider value={{ ...alert, setAlert }} >
+                        <SettingsContext.Provider value={settings} >
+                            <UploadContextProvider>
+                                <ThemeProvider theme={muiTheme}>
+                                    <CssBaseline />
+                                    <Main toggleTheme={toggleTheme} />
+                                </ThemeProvider>
+                            </UploadContextProvider>
+                        </SettingsContext.Provider>
+                    </AlertContext.Provider>
+                </GlobalLoadingContext.Provider>
+            </UserContextProvider>
         </ThemeContext.Provider>
     );
 }
 
 const useStyles = makeStyles({
     mainRoot: {
+        minWidth: 300,
         maxWidth: "100%",
         display: "flex",
         flex: 1,
@@ -112,18 +103,35 @@ const useStyles = makeStyles({
         display: "flex",
         justifyContent: "center",
         overflow: "auto",
-        overflowWrap: "break-word"
+        overflowWrap: "break-word",
+        position: "relative"
+    },
+    globalLoading: {
+        position: "absolute",
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000
     }
 });
 
 const Main = () => {
     const classes = useStyles(useContext(ThemeContext).theme);
+    const alert = useContext(AlertContext);
+    const { globalLoading } = useContext(GlobalLoadingContext);
     return (
         <div className={classes.mainRoot}>
             <div className={cn(classes.topPanel)}>
                 <TopBar/>
             </div>
             <div id="page-content" className={classes.content} >
+                {globalLoading && <div className={classes.globalLoading}><Loader /></div>}
+                {alert.visible && <Alert />}
                 <Switch>
                     <Route path="/" exact component={Dashboard} />
                     <Route path="/upload" exact component={UploadForm} />

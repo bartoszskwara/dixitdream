@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 
 const AutocompleteWithChips = ({ id, inputValue, tags, onTagDelete, onTagAdded, error, label, selectedOption,
 disabled, className, position = "top", inputAdornmentIcon, options, loading, onInputChange, onBlur, loadMore, shouldFetchMore,
-renderOption }) => {
+renderOption, setInputRef }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
 
     const [open, setOpen] = useState(false);
@@ -75,13 +75,13 @@ renderOption }) => {
                     id={`${id}-autocomplete`}
                     freeSolo
                     disableClearable
-                    // open={open}
-                    // onOpen={() => setOpen(true)}
-                    // onClose={() => setOpen(false)}
+                    open={loading ? false : open}
+                    onOpen={() => setOpen(true)}
+                    onClose={() => setOpen(false)}
                     value={selectedOption}
                     inputValue={inputValue}
                     renderOption={renderOption}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={(option) => option.name ? option.name : option}
                     options={options}
                     loading={loading}
                     loadingText={<Loader />}
@@ -101,6 +101,7 @@ renderOption }) => {
                             <TextField
                                 {...params}
                                 id={`${id}-input`}
+                                inputRef={setInputRef}
                                 error={!!error}
                                 disabled={disabled}
                                 onChange={onInputChange}
@@ -116,8 +117,7 @@ renderOption }) => {
                                         : undefined,
                                     endAdornment: (
                                         <>
-                                            {loading ? <CircularProgress className={classes.loader} size={20} /> : null}
-                                            {params.InputProps.endAdornment}
+                                            {loading ? <Loader /> : null}
                                         </>
                                     ),
                                 }}

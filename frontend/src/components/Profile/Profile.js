@@ -2,8 +2,8 @@ import React, {useContext, useEffect, useState} from "react";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import {useParams} from "react-router";
-import {Api, apiCall} from "../../api/Api";
-import Tiles from "../Painting/Tiles";
+import {Api, apiCall} from "api/Api";
+import InfiniteTiles from "components/Painting/InfiniteTiles";
 import ProfileSummary from "./ProfileSummary";
 
 const useStyles = makeStyles(theme => ({
@@ -23,10 +23,15 @@ const Profile = () => {
     const [paintings, setPaintings] = useState([]);
     const [paintingsLoading, setPaintingsLoading] = useState(false);
     const [paintingsLoadingError, setPaintingsLoadingError] = useState(false);
-    const [page, setPage] = useState(0);
     const [shouldFetchMore, setShouldFetchMore] = useState(true);
-    const [lastFetchedPaintingId, setLastFetchedPaintingId] = useState(undefined);
+    const [filter, setFilter] = useState(undefined);
     const { profileId } = useParams();
+
+    useEffect(() => {
+        if(profileId) {
+            setFilter({ profileId });
+        }
+    }, [profileId]);
 
     const fetchProfilePaintings = async ({ profileId, next, lastPaintingId }) => {
         setPaintingsLoading(true);
@@ -37,33 +42,14 @@ const Profile = () => {
                 ...(next && lastPaintingId ? { lastPaintingId } : {} )
             }
         });
-        setPaintingsLoading(false);
         if (!data.error) {
             setPaintings(next ? items => ([...items, ...data.content]) : data.content);
             setShouldFetchMore(data.content.length === LIMIT);
         } else {
             setPaintingsLoadingError(true);
         }
+        setPaintingsLoading(false);
     }
-
-    useEffect(() => {
-        if (!profileId) {
-            return;
-        }
-        if (lastFetchedPaintingId && paintings.length) {
-            fetchProfilePaintings({  profileId, next: true, lastPaintingId: lastFetchedPaintingId });
-        } else {
-            fetchProfilePaintings({ profileId });
-        }
-    }, [lastFetchedPaintingId]);
-
-    useEffect(() => {
-        if (page > 0 && paintings.length) {
-            setLastFetchedPaintingId(paintings[paintings.length - 1].id);
-        } else {
-            setLastFetchedPaintingId(undefined);
-        }
-    }, [page]);
 
     return (
         <div id="profile-root" className={classes.profileRoot}>
@@ -72,16 +58,17 @@ const Profile = () => {
                 detailed
                 color="secondary"
             />
-            <div className={classes.tiles}>
-                <Tiles
-                    items={paintings}
-                    fetchMore={() => setPage(p => (p + 1))}
-                    refresh={() => setPage(0)}
-                    hasMore={shouldFetchMore && !paintingsLoadingError}
-                    error={paintingsLoadingError}
-                    scrollTarget="profile-root"
-                />
-            </div>
+            {profileId && <InfiniteTiles
+                className={classes.tiles}
+                items={paintings}
+                fetchPaintings={fetchProfilePaintings}
+                filter={filter}
+                filterRequired
+                hasMore={shouldFetchMore && !paintingsLoadingError}
+                error={paintingsLoadingError}
+                scrollTarget="profile-root"
+                loading={paintingsLoading}
+            />}
         </div>
     );
 };

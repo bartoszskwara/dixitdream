@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState } from 'react'
 import { ThemeContext } from 'components/themes'
 import { makeStyles } from '@material-ui/core/styles';
 import UploadContext from "../contexts/UploadContext";
@@ -51,6 +51,7 @@ const UploadForm = () => {
     const [cropLoading, setCropLoading] = useState(false);
     const [title, setTitle] = useState("");
     const [tags, setTags] = useState([]);
+    const [tagsInputRef, setTagsInputRef] = useState(null);
     const [description, setDescription] = useState("");
     const [error, setError] = useState({
         file: file ? "" : undefined
@@ -89,6 +90,11 @@ const UploadForm = () => {
         }
     }, [error]);
 
+    useEffect(() => {
+        if(tagsInputRef) {
+            tagsInputRef.focus();
+        }
+    }, [tags]);
 
     const validate = {
         title: () => {
@@ -222,6 +228,7 @@ const UploadForm = () => {
                         onBlur={() => validate.tags()}
                         error={error.tags}
                         disabled={challengeData && challengeData.disabled}
+                        setInputRef={(input) => setTagsInputRef(input)}
                     />
                     <TextField
                         value={description}
