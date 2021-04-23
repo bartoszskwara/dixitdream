@@ -5,10 +5,13 @@ import Avatar from "@material-ui/core/Avatar";
 import cn from "classnames";
 import {useHistory} from "react-router";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import {Menu, MenuItem} from "@material-ui/core";
+import {Divider, ListItemIcon, ListItemText, Menu, MenuItem} from "@material-ui/core";
 import {Api, apiCall} from "../../api/Api";
 import AlertContext from "components/contexts/AlertContext";
 import GlobalLoadingContext from "../contexts/GlobalLoadingContext";
+import ShareIcon from '@material-ui/icons/Share';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles(theme => ({
     avatarContainer: {
@@ -46,10 +49,13 @@ const useStyles = makeStyles(theme => ({
     },
     options: {
         marginBottom: 10
+    },
+    optionIcon: {
+        cursor: "pointer"
     }
 }));
 
-const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOptions }) => {
+const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOptions, editable }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const history = useHistory();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -112,6 +118,7 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
             </div>
             {showOptions && <div className={classes.options}>
                 <MoreVertIcon
+                    className={classes.optionIcon}
                     onClick={openMenu}
                 />
                 <Menu
@@ -124,15 +131,44 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
                     keepMounted
                     open={Boolean(anchorEl)}
                     onClose={closeMenu}
+                    autoFocus={false}
                 >
                     <MenuItem
                         onClick={() => {
-                            deletePainting();
+                            console.log("Sharing...");
                             closeMenu();
                         }}
                     >
-                        Delete painting
+                        <ListItemIcon>
+                            <ShareIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Share" />
                     </MenuItem>
+                    {editable && <Divider />}
+                    {editable &&
+                        <MenuItem
+                            onClick={() => {
+                                console.log("Editing...");
+                                closeMenu();
+                            }}
+                        >
+                            <ListItemIcon>
+                                <EditIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText primary="Edit" />
+                        </MenuItem>}
+                    {editable &&
+                        <MenuItem
+                            onClick={() => {
+                                deletePainting();
+                                closeMenu();
+                            }}
+                        >
+                            <ListItemIcon>
+                                <DeleteIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText primary="Delete" />
+                        </MenuItem>}
                 </Menu>
             </div>}
         </div>

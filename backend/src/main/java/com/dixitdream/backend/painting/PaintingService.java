@@ -3,6 +3,7 @@ package com.dixitdream.backend.painting;
 import com.dixitdream.backend.dao.entity.Challenge;
 import com.dixitdream.backend.dao.entity.Painting;
 import com.dixitdream.backend.dao.entity.Profile;
+import com.dixitdream.backend.dao.projection.PaintingProjectionDto;
 import com.dixitdream.backend.dao.projection.ProfileInfoDto;
 import com.dixitdream.backend.dao.repository.ChallengeRepository;
 import com.dixitdream.backend.dao.repository.PaintingRepository;
@@ -37,8 +38,8 @@ public class PaintingService extends AmazonS3Service {
         return paintingRepository.findByIdWithDetails(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
     }
 
-    public List<Painting> getPaintings(String query, int limit, Long lastPaintingId, Collection<String> tags, Long challengeId, Long profileId) {
-        return paintingRepository.findPaintings(query, tags, challengeId, profileId, lastPaintingId, limit);
+    public List<PaintingProjectionDto> getPaintings(String query, int limit, Long lastPaintingId, Collection<String> tags, Long challengeId, Long profileId) {
+        return paintingRepository.findPaintings(query, tags, challengeId, profileId, lastPaintingId, limit, profileService.getCurrentProfile());
     }
 
     public String uploadPainting(String title, String description, Set<String> tags, Long challengeId, MultipartFile multipartFile) {

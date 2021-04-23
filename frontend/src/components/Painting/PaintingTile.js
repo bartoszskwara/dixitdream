@@ -84,7 +84,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = () => {}, showOptions }) => {
+const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = () => {}, showOptions, editable }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const isBigScreen = useMediaQuery("(min-width:800px) and (max-width:1500px)");
     const isLargeScreen = useMediaQuery("(min-width:1500px)");
@@ -111,6 +111,7 @@ const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = (
                         avatarVariant={avatarVariant}
                         author={author}
                         showOptions={showOptions}
+                        editable={editable}
                     />
                     <img
                         alt="preview"

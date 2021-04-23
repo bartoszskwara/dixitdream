@@ -157,6 +157,11 @@ export const muiThemeProvider = ({ colors }) => {
                 inputRoot: {
                     padding: "0 10px"
                 }
+            },
+            MuiMenuItem: {
+                root: {
+                    minWidth: 100
+                }
             }
         },
     });

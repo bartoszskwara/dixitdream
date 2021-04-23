@@ -3,6 +3,7 @@ package com.dixitdream.backend.painting;
 import com.dixitdream.backend.dao.entity.Painting;
 import com.dixitdream.backend.dao.entity.Profile;
 import com.dixitdream.backend.dao.entity.Tag;
+import com.dixitdream.backend.dao.projection.PaintingProjectionDto;
 import com.dixitdream.backend.dto.ListContentDto;
 import com.dixitdream.backend.profile.ProfileDto;
 import com.dixitdream.backend.profile.ProfileService;
@@ -45,6 +46,7 @@ public class PaintingController {
     public ResponseEntity<PaintingDto> getPainting(@PathVariable Long paintingId) {
         Painting painting = paintingService.getPainting(paintingId);
         Profile currentProfile = profileService.getCurrentProfile();
+        boolean isCurrentProfileTheOwner = currentProfile.getId().equals(painting.getProfile().getId());
         ProfileDto profileDto = ProfileDto.builder()
                 .id(painting.getProfile().getId())
                 .username(painting.getProfile().getUsername())
@@ -56,7 +58,7 @@ public class PaintingController {
                 .description(painting.getDescription())
                 .profile(profileDto)
                 .tags(painting.getTags().stream().map(Tag::getName).collect(Collectors.toSet()))
-                .removable(currentProfile.getId().equals(painting.getProfile().getId()))
+                .editable(isCurrentProfileTheOwner)
                 .likes(painting.getLikes().size())
                 .liked(painting.getLikes().contains(currentProfile))
                 .visits(painting.getVisits().size())
@@ -69,18 +71,17 @@ public class PaintingController {
         String query = isNotEmpty(dto.getQuery()) ? dto.getQuery() : "";
         int limit = dto.getLimit() != null ? dto.getLimit() : 10;
         Collection<String> tags = CollectionUtils.emptyIfNull(dto.getTags());
-        Profile currentProfile = profileService.getCurrentProfile();
-        List<Painting> paintings = paintingService.getPaintings(query, limit, dto.getLastPaintingId(), tags, dto.getChallengeId(), dto.getProfileId());
+        List<PaintingProjectionDto> paintings = paintingService.getPaintings(query, limit, dto.getLastPaintingId(), tags, dto.getChallengeId(), dto.getProfileId());
         List<PaintingDto> dtos = paintings.stream()
                 .map(p -> PaintingDto.builder()
                         .id(p.getId())
                         .url(paintingService.getFileUrl(p.getFilePath()))
                         .profile(ProfileDto.builder()
-                                .id(p.getProfile().getId())
+                                .id(p.getProfileId())
                                 .build())
-                        .likes(p.getLikes().size())
-                        .liked(p.getLikes().contains(currentProfile))
-                        .visits(p.getVisits().size())
+                        .likes(p.getLikes())
+                        .liked(p.isLikedByCurrentProfile())
+                        .visits(p.getVisits())
                         .build())
                 .collect(Collectors.toList());
         return ResponseEntity.ok(new ListContentDto<>(dtos));

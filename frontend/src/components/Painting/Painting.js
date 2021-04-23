@@ -92,6 +92,7 @@ const Painting = () => {
                             className={classes.paintingTile}
                             avatarVariant="outside"
                             showOptions
+                            editable={painting.editable}
                         />
                     </div>
                     <div className={classes.bottomContent}>

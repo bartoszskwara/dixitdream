@@ -45,7 +45,7 @@ const Dashboard = () => {
                 ...(next && lastPaintingId ? { lastPaintingId } : {} )
             }
         });
-        if (data) {
+        if (!data.error && data.content) {
             setPaintings(next ? items => ([...items, ...data.content]) : data.content);
             setShouldFetchMore(data.content.length === LIMIT);
         } else {

@@ -22,5 +22,5 @@ public class PaintingDto {
     private final boolean liked;
     private final Integer visits;
     private final Set<String> tags;
-    private final boolean removable;
+    private final boolean editable;
 }
