@@ -41,19 +41,15 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const PaintingPreview = ({ file, fileBase64, onDelete, error }) => {
+const PaintingPreview = ({ fileBase64, onDelete, error }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [preview, setPreview] = useState(null);
-    const [shortenFilename, setShortenFilename] = useState(null);
 
     useEffect(() => {
-        if (file) {
+        if (fileBase64) {
             setPreview(fileBase64);
-            const fileName = file.name.replace(/\.[^/.]+$/, "");
-            const shortName = fileName.length > 10 ? `${fileName.substring(0, 8)}(...).${file.name.split(".").pop()}` : file.name;
-            setShortenFilename(shortName);
         }
-    }, [file]);
+    }, [fileBase64]);
 
 
     return (
@@ -65,10 +61,9 @@ const PaintingPreview = ({ file, fileBase64, onDelete, error }) => {
                     </div>
                     <div className={cn(classes.container, { [classes.error]: error } )} >
                         <img alt="preview" src={preview} className={classes.preview} />
-
                     </div>
                     <div className={classes.box}>
-                        <IconButton onClick={onDelete}>
+                        <IconButton onClick={onDelete ? onDelete : () => {}}>
                             <DeleteIcon />
                         </IconButton>
                     </div>
