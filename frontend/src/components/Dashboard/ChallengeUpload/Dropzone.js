@@ -3,8 +3,7 @@ import { ThemeContext } from 'components/themes';
 import { makeStyles } from '@material-ui/core/styles';
 import {useDropzone} from 'react-dropzone'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import SettingsContext from "../../contexts/SettingsContext";
-import UploadContext from "../../contexts/UploadContext";
+import { SettingsContext, UploadContext } from "components/contexts";
 import Loader from "../../Loader/Loader";
 import cn from "classnames";
 

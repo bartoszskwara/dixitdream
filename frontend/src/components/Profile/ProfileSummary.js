@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { ThemeContext } from 'components/themes';
-import UserContext from 'components/contexts/UserContext';
+import { UserContext } from 'components/contexts';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import ProfilePicture from "assets/images/profile.png";

@@ -7,7 +7,7 @@ import {ReactComponent as SearchIcon } from "assets/images/search3.svg";
 import {ReactComponent as UserIcon } from "assets/images/user.svg";
 import {ReactComponent as AddIcon } from "assets/images/add2.svg";
 import {useHistory} from "react-router";
-import UserContext from "../contexts/UserContext";
+import { UserContext } from "../contexts";
 
 const useStyles = makeStyles(theme => ({
     root: {

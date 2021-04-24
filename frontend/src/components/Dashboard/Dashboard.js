@@ -6,7 +6,7 @@ import InfiniteTiles from "components/Painting/InfiniteTiles";
 import {Api, apiCall} from "api/Api";
 import ProfileSummary from "components/Profile/ProfileSummary";
 import {useHistory} from "react-router";
-import UserContext from "components/contexts/UserContext";
+import { UserContext } from "components/contexts";
 
 const useStyles = makeStyles(theme => ({
     dashboardRoot: {

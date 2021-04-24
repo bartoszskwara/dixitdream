@@ -1,16 +1,14 @@
 import React, {useContext, useEffect, useState } from 'react'
 import { ThemeContext } from 'components/themes'
 import { makeStyles } from '@material-ui/core/styles';
-import UploadContext from "../contexts/UploadContext";
-import Dropzone from "../Dashboard/ChallengeUpload/Dropzone";
+import { UploadContext, UserContext, AlertContext } from "components/contexts";
+import Dropzone from "components/Dashboard/ChallengeUpload/Dropzone";
 import {Api, apiCall} from "../../api/Api";
 import {useHistory} from "react-router";
-import UserContext from "../contexts/UserContext";
-import AlertContext from "../contexts/AlertContext";
 import Crop from "./Crop";
 import Card from "components/Card/Card";
 import {getCroppedImg} from "./cropImage";
-import PaintingDetailsEditor from "../Painting/PaintingDetailsEditor";
+import PaintingDetailsEditor from "components/Painting/PaintingDetailsEditor";
 
 const useStyles = makeStyles(theme => ({
     flexContainer: {

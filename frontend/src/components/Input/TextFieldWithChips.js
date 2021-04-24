@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, { useContext } from 'react'
 import PropTypes from "prop-types";
 import { ThemeContext } from 'components/themes'
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,8 +9,6 @@ import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import cn from "classnames";
 import Tags from "../Tags/Tags";
-import {Select} from "@material-ui/core";
-import {Autocomplete} from "@material-ui/lab";
 
 const useStyles = makeStyles(theme => ({
     root: {

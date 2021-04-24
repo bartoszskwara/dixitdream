@@ -4,12 +4,11 @@ import { ThemeContext } from 'components/themes'
 import { makeStyles } from '@material-ui/core/styles';
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import cn from "classnames";
 import Tags from "../Tags/Tags";
-import {CircularProgress, Select, TextField} from "@material-ui/core";
+import {TextField} from "@material-ui/core";
 import {Autocomplete} from "@material-ui/lab";
 import Loader from "../Loader/Loader";
 

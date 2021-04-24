@@ -7,7 +7,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {useHistory} from "react-router";
 import cn from "classnames";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import PaintingContext from "../contexts/PaintingContext";
+import { PaintingContext } from "../contexts";
 
 const useStyles = makeStyles(theme => ({
     root: {

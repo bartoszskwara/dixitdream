@@ -6,7 +6,7 @@ import Loader from "../Loader/Loader";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import PaintingTileBottomPanel from "./PaintingTileBottomPanel";
 import PaintingTileHeader from "./PaintingTileHeader";
-import PaintingContext from "../contexts/PaintingContext";
+import { PaintingContext } from "../contexts";
 
 const useStyles = makeStyles(theme => ({
     paintingTileContainer: {

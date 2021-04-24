@@ -5,8 +5,7 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import cn from "classnames";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import {Api, apiCall} from "../../api/Api";
-import AlertContext from "../contexts/AlertContext";
-import PaintingContext from "../contexts/PaintingContext";
+import { AlertContext, PaintingContext } from "../contexts";
 
 const useStyles = makeStyles(theme => ({
     info: {

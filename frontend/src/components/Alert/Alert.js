@@ -1,7 +1,7 @@
 import React, {useContext, useEffect} from 'react'
 import { ThemeContext } from 'components/themes'
 import { makeStyles } from '@material-ui/core/styles';
-import AlertContext from "components/contexts/AlertContext";
+import { AlertContext } from "components/contexts";
 import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles(theme => ({
