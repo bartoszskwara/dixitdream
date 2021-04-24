@@ -15,11 +15,21 @@ const useStyles = makeStyles(theme => ({
         "&:hover": {
             backgroundColor: props => props.colors.accent
         }
+    },
+    smallRoot: {
+        fontSize: 15
+    },
+    largeRoot: {
+        fontSize: 25
+    },
+    defaultRoot: {
+        fontSize: 20
     }
 }));
 
-const ButtonWrapper = ({ children, className, variant = "contained", color = "primary", onClick, disabled, startIcon }) => {
+const ButtonWrapper = ({ children, className, variant = "contained", color = "primary", onClick, disabled, startIcon, size }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
+    const rootClass = size === "small" ? classes.smallRoot : size === "large" ? classes.largeRoot : classes.defaultRoot;
     return (
         <Button
             className={className}
@@ -28,6 +38,7 @@ const ButtonWrapper = ({ children, className, variant = "contained", color = "pr
             onClick={onClick}
             disabled={disabled}
             classes={{
+                root: rootClass,
                 containedPrimary: classes.containedPrimary
             }}
             startIcon={startIcon}

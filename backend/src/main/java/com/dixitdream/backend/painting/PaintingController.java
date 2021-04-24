@@ -5,6 +5,7 @@ import com.dixitdream.backend.dao.entity.Profile;
 import com.dixitdream.backend.dao.entity.Tag;
 import com.dixitdream.backend.dao.projection.PaintingProjectionDto;
 import com.dixitdream.backend.dto.ListContentDto;
+import com.dixitdream.backend.infrastructure.exception.BadRequestException;
 import com.dixitdream.backend.profile.ProfileDto;
 import com.dixitdream.backend.profile.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -90,8 +91,8 @@ public class PaintingController {
     @PostMapping(value = "/upload")
     public ResponseEntity<PaintingDto> uploadPainting(@Valid @ModelAttribute NewPaintingDto dto) {
         validatePainting(dto);
-        String paintingUrl = paintingService.uploadPainting(dto.getTitle(), dto.getDescription(), dto.getTags(), dto.getChallengeId(), dto.getFile());
-        return ResponseEntity.ok(PaintingDto.builder().url(paintingUrl).build());
+        Painting painting = paintingService.uploadPainting(dto.getTitle(), dto.getDescription(), dto.getTags(), dto.getChallengeId(), dto.getFile());
+        return ResponseEntity.ok(PaintingDto.builder().id(painting.getId()).build());
     }
 
     @DeleteMapping("/{paintingId}")
@@ -115,8 +116,11 @@ public class PaintingController {
     }
 
     private void validatePainting(NewPaintingDto dto) {
+        if(dto.getFile() == null) {
+            throw new BadRequestException("File not found.");
+        }
         if(dto.getFile().getSize() > maxFileSizeMB * 1024 * 1024) {
-            throw new IllegalArgumentException("File size is too big.");
+            throw new BadRequestException("File size is too big.");
         }
     }
 }

@@ -33,8 +33,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         ResponseErrorDto errorDto = new ResponseErrorDto(ex.getMessage());
         return handleExceptionInternal(ex, errorDto, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    protected ResponseEntity<Object> handleBadRequest(RuntimeException ex, WebRequest request) {
+        ResponseErrorDto errorDto = new ResponseErrorDto(ex.getMessage());
+        return handleExceptionInternal(ex, errorDto, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(ServerErrorException.class)
+    protected ResponseEntity<Object> handleServerError(RuntimeException ex, WebRequest request) {
+        ResponseErrorDto errorDto = new ResponseErrorDto(ex.getMessage());
+        return handleExceptionInternal(ex, errorDto, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 }

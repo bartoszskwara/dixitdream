@@ -17,13 +17,13 @@ public class ProfileService {
     }
 
     public ProfileInfoDto getCurrentProfileInfo() {
-        Long id = profileRepository.findAll().stream().findAny().orElseThrow(() -> new IllegalArgumentException("No profile.")).getId();
+        Long id = profileRepository.findAll().stream().findAny().orElseThrow(() -> new ResourceNotFoundException("No profile.")).getId();
         return profileRepository.findProfileById(id);
     }
 
     public Profile getCurrentProfile() {
-        Long id = profileRepository.findAll().stream().findAny().orElseThrow(() -> new IllegalArgumentException("No profile.")).getId();
-        return profileRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No profile."));
+        Long id = profileRepository.findAll().stream().findAny().orElseThrow(() -> new ResourceNotFoundException("No profile.")).getId();
+        return profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No profile."));
     }
 
     public Profile createProfile(NewProfileDto profileDto) {

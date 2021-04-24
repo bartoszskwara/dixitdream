@@ -24,35 +24,27 @@ public class ProfileController {
 
     @GetMapping("/current")
     public ResponseEntity<ProfileDto> getCurrentProfile() {
-        try {
-            ProfileInfoDto profile = profileService.getCurrentProfileInfo();
-            ProfileDto dto = ProfileDto.builder()
-                    .id(profile.getId())
-                    .username(profile.getUsername())
-                    .followers(profile.getFollowers())
-                    .paintings(profile.getPaintings())
-                    .build();
-            return ResponseEntity.ok(dto);
-        } catch(IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found.", e);
-        }
+        ProfileInfoDto profile = profileService.getCurrentProfileInfo();
+        ProfileDto dto = ProfileDto.builder()
+                .id(profile.getId())
+                .username(profile.getUsername())
+                .followers(profile.getFollowers())
+                .paintings(profile.getPaintings())
+                .build();
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/{profileId}")
     public ResponseEntity<ProfileDto> getProfile(@PathVariable Long profileId) {
-        try {
-            Profile profile = profileService.getProfile(profileId);
-            ProfileDto dto = ProfileDto.builder()
-                    .id(profile.getId())
-                    .username(profile.getUsername())
-                    .followers(profile.getFollowers().size())
-                    .paintings(profile.getPaintings().size())
-                    .description(profile.getDescription())
-                    .build();
-            return ResponseEntity.ok(dto);
-        } catch(IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found.", e);
-        }
+        Profile profile = profileService.getProfile(profileId);
+        ProfileDto dto = ProfileDto.builder()
+                .id(profile.getId())
+                .username(profile.getUsername())
+                .followers(profile.getFollowers().size())
+                .paintings(profile.getPaintings().size())
+                .description(profile.getDescription())
+                .build();
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("")

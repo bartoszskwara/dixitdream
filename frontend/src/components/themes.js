@@ -1,5 +1,5 @@
 import React from 'react';
-import {createMuiTheme} from "@material-ui/core";
+import {unstable_createMuiStrictModeTheme as createMuiTheme} from "@material-ui/core";
 import SourceSansProBold from 'assets/fonts/source-sans-pro/SourceSansPro-Bold.ttf';
 
 const sourceSansFont = {

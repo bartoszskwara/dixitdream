@@ -1,9 +1,8 @@
 import React, {useContext, useState, useEffect} from 'react'
 import Dashboard from "components/Dashboard/Dashboard";
 import {themes, muiThemeProvider, ThemeContext} from "components/themes";
-import UserContext from "components/contexts/UserContext";
 import SettingsContext from "components/contexts/SettingsContext";
-import UploadContext from "components/contexts/UploadContext";
+import DialogContext from "components/contexts/DialogContext";
 import AlertContext from "components/contexts/AlertContext";
 import GlobalLoadingContext from "components/contexts/GlobalLoadingContext";
 import {makeStyles, ThemeProvider} from "@material-ui/core"
@@ -21,6 +20,7 @@ import Alert from "../Alert/Alert";
 import Loader from "../Loader/Loader";
 import UserContextProvider from "./UserContextProvider";
 import UploadContextProvider from "./UploadContextProvider";
+import Dialog from "../Dialog/Dialog";
 
 const MainWrapper = () => {
     const [theme, setTheme] = useState(themes.light);
@@ -28,10 +28,10 @@ const MainWrapper = () => {
     const [settings, setSettings] = useState(SettingsContext);
     const [globalLoading, setGlobalLoading] = useState(false);
     const [alert, setAlert] = useState({
-        severity: undefined,
-        message: undefined,
-        onClose: undefined,
         visible: false
+    });
+    const [dialog, setDialog] = useState({
+        open: false
     });
 
     const fetchSettings = async () => {
@@ -61,14 +61,16 @@ const MainWrapper = () => {
             <UserContextProvider>
                 <GlobalLoadingContext.Provider value={{ globalLoading, setGlobalLoading }} >
                     <AlertContext.Provider value={{ ...alert, setAlert }} >
-                        <SettingsContext.Provider value={settings} >
-                            <UploadContextProvider>
-                                <ThemeProvider theme={muiTheme}>
-                                    <CssBaseline />
-                                    <Main toggleTheme={toggleTheme} />
-                                </ThemeProvider>
-                            </UploadContextProvider>
-                        </SettingsContext.Provider>
+                        <DialogContext.Provider value={{ ...dialog, setDialog }} >
+                            <SettingsContext.Provider value={settings} >
+                                <UploadContextProvider>
+                                    <ThemeProvider theme={muiTheme}>
+                                        <CssBaseline />
+                                        <Main toggleTheme={toggleTheme} />
+                                    </ThemeProvider>
+                                </UploadContextProvider>
+                            </SettingsContext.Provider>
+                        </DialogContext.Provider>
                     </AlertContext.Provider>
                 </GlobalLoadingContext.Provider>
             </UserContextProvider>
@@ -123,6 +125,7 @@ const useStyles = makeStyles({
 const Main = () => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const alert = useContext(AlertContext);
+    const dialog = useContext(DialogContext);
     const { globalLoading } = useContext(GlobalLoadingContext);
     return (
         <div className={classes.mainRoot}>
@@ -131,6 +134,7 @@ const Main = () => {
             </div>
             <div id="page-content" className={classes.content} >
                 {globalLoading && <div className={classes.globalLoading}><Loader /></div>}
+                {dialog.open && <Dialog />}
                 {alert.visible && <Alert />}
                 <Switch>
                     <Route path="/" exact component={Dashboard} />

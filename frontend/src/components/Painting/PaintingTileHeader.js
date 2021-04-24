@@ -12,6 +12,7 @@ import GlobalLoadingContext from "../contexts/GlobalLoadingContext";
 import ShareIcon from '@material-ui/icons/Share';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import DialogContext from "../contexts/DialogContext";
 
 const useStyles = makeStyles(theme => ({
     avatarContainer: {
@@ -63,6 +64,7 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
     const [deleteError, setDeleteError] = useState(undefined);
     const { setGlobalLoading } = useContext(GlobalLoadingContext);
     const { setAlert } = useContext(AlertContext);
+    const { setDialog } = useContext(DialogContext);
 
     useEffect(() => {
         if(deleteSuccess) {
@@ -73,7 +75,7 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
                 message: deleteError,
                 severity: "error",
                 visible: true
-            })
+            });
             setDeleteError(null);
         }
     }, [deleteSuccess, deleteError]);
@@ -95,7 +97,53 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
             setDeleteError(data.error);
         }
         setGlobalLoading(false);
-    }
+    };
+
+    const confirmDeletePainting = () => {
+        setDialog({
+            open: true,
+            title: "ARE YOU SURE?",
+            message: "After confirmation, the image will be deleted permanently.",
+            onConfirm: () => deletePainting()
+        });
+    };
+
+    const menuItemsConfig = [{
+        label: "Share",
+        icon: <ShareIcon />,
+        onClick: () => console.log("Sharing...")
+    }, ...(editable ? [{
+        divider: true
+    },{
+        label: "Edit",
+        icon: <EditIcon />,
+        onClick: () => console.log("Editing...")
+    }, {
+        label: "Delete",
+        icon: <DeleteIcon />,
+        onClick: () => confirmDeletePainting()
+    }] : [] )
+    ];
+
+    const menuItems = menuItemsConfig.map(item => {
+       if(item.divider) {
+           return <Divider />;
+       } else {
+           return <MenuItem
+               onClick={() => {
+                   if (item.onClick) {
+                       item.onClick();
+                   }
+                   closeMenu();
+               }}
+           >
+               {item.icon && <ListItemIcon>
+                   {React.cloneElement(item.icon, { fontSize: "small" }) }
+               </ListItemIcon>}
+               <ListItemText primary={item.label} />
+           </MenuItem>;
+       }
+    });
 
     return (
         <div className={classes.header}>
@@ -133,42 +181,7 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
                     onClose={closeMenu}
                     autoFocus={false}
                 >
-                    <MenuItem
-                        onClick={() => {
-                            console.log("Sharing...");
-                            closeMenu();
-                        }}
-                    >
-                        <ListItemIcon>
-                            <ShareIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Share" />
-                    </MenuItem>
-                    {editable && <Divider />}
-                    {editable &&
-                        <MenuItem
-                            onClick={() => {
-                                console.log("Editing...");
-                                closeMenu();
-                            }}
-                        >
-                            <ListItemIcon>
-                                <EditIcon fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText primary="Edit" />
-                        </MenuItem>}
-                    {editable &&
-                        <MenuItem
-                            onClick={() => {
-                                deletePainting();
-                                closeMenu();
-                            }}
-                        >
-                            <ListItemIcon>
-                                <DeleteIcon fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText primary="Delete" />
-                        </MenuItem>}
+                    {menuItems}
                 </Menu>
             </div>}
         </div>

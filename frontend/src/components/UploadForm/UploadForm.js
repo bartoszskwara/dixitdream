@@ -11,6 +11,7 @@ import TagsInput from "../Tags/TagsInput";
 import {Api, apiCall} from "../../api/Api";
 import {useHistory} from "react-router";
 import UserContext from "../contexts/UserContext";
+import AlertContext from "../contexts/AlertContext";
 import Crop from "./Crop";
 import Card from "components/Card/Card";
 import {getCroppedImg} from "./cropImage";
@@ -44,6 +45,7 @@ const UploadForm = () => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const { file, setFile, challengeData, setChallengeData, firstAttempt, setFirstAttempt, fileBase64, setFileBase64 } = useContext(UploadContext);
     const { refresh } = useContext(UserContext);
+    const { setAlert } = useContext(AlertContext);
     const [showDropzone, setShowDropzone] = useState(false);
     const [showCrop, setShowCrop] = useState(false);
     const [saveDisabled, setSaveDisabled] = useState(true);
@@ -146,9 +148,22 @@ const UploadForm = () => {
             description,
             file: await fetch(fileBase64).then((res) => res.blob())
         };
-        await apiCall(Api.uploadPainting, { postData: data, isFormData: true })
-            .then(() => refresh());
-        history.push("");
+        const response = await apiCall(Api.uploadPainting, { postData: data, isFormData: true });
+        if(!response.error) {
+            refresh();
+            history.push(`/painting/${response.id}`);
+            setAlert({
+                message: "Painting added successfully!",
+                severity: "success",
+                visible: true
+            })
+        } else {
+            setAlert({
+                message: response.error,
+                severity: "error",
+                visible: true
+            })
+        }
         setUploadLoading(false);
         setSaveDisabled(false);
     }

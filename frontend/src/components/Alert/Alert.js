@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect} from 'react'
 import { ThemeContext } from 'components/themes'
 import { makeStyles } from '@material-ui/core/styles';
 import AlertContext from "components/contexts/AlertContext";
@@ -14,21 +14,31 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const AlertWrapper = ({ className }) => {
+const AlertWrapper = ({}) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const { severity, message, onClose, setAlert } = useContext(AlertContext);
+
+    useEffect(() => {
+        const timout = severity === "success" ? setTimeout(() => {
+            closeAlert();
+        }, 3000) : undefined;
+        return severity === "success" ? () => clearTimeout(timout) : () => {};
+    }, []);
+
+    const closeAlert = () => {
+        if(onClose) {
+            onClose();
+        }
+        setAlert({
+            visible: false
+        });
+    };
+
     return (
         <Alert
             severity={severity}
             variant="filled"
-            onClose={() => {
-                if(onClose) {
-                    onClose();
-                }
-                setAlert({
-                    visible: false
-                });
-            }}
+            onClose={closeAlert}
             classes={{
                 root: classes.alertRoot
             }}

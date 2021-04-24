@@ -63,6 +63,7 @@ const Crop = ({ fileBase64, onCropComplete, loading, error }) => {
                             onCropChange={onCropChange}
                             onCropComplete={onCropSet}
                             onZoomChange={onZoomChange}
+                            zoomSpeed={0.1}
                         />
                     </div>
                     {error && <div className={classes.errorText}>{error}</div>}

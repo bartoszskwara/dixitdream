@@ -7,13 +7,17 @@ import com.dixitdream.backend.dao.projection.PaintingProjectionDto;
 import com.dixitdream.backend.dao.projection.ProfileInfoDto;
 import com.dixitdream.backend.dao.repository.ChallengeRepository;
 import com.dixitdream.backend.dao.repository.PaintingRepository;
+import com.dixitdream.backend.infrastructure.exception.BadRequestException;
 import com.dixitdream.backend.infrastructure.exception.ResourceNotFoundException;
+import com.dixitdream.backend.infrastructure.exception.ServerErrorException;
 import com.dixitdream.backend.profile.ProfileService;
 import com.dixitdream.backend.tags.TagMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,8 +46,9 @@ public class PaintingService extends AmazonS3Service {
         return paintingRepository.findPaintings(query, tags, challengeId, profileId, lastPaintingId, limit, profileService.getCurrentProfile());
     }
 
-    public String uploadPainting(String title, String description, Set<String> tags, Long challengeId, MultipartFile multipartFile) {
+    public Painting uploadPainting(String title, String description, Set<String> tags, Long challengeId, MultipartFile multipartFile) {
         ProfileInfoDto profile = profileService.getCurrentProfileInfo();
+        validateAspectRatio(multipartFile);
         String filePath = uploadFile(multipartFile, profile.getId());
 
         Challenge challenge = challengeId != null ? challengeRepository.findById(challengeId).orElse(null) : null;
@@ -55,12 +60,11 @@ public class PaintingService extends AmazonS3Service {
         painting.setFilePath(filePath);
         painting.setChallenge(challenge);
         painting.setCreationDate(new Timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000));
-        paintingRepository.save(painting);
-        return getFileUrl(filePath);
+        return paintingRepository.save(painting);
     }
 
     public void deletePainting(Long paintingId) {
-        Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new IllegalArgumentException("Painting not found"));
+        Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
         String filePath = painting.getFilePath();
         painting.setTags(new HashSet<>());
         paintingRepository.delete(painting);
@@ -68,7 +72,7 @@ public class PaintingService extends AmazonS3Service {
     }
 
     public void toggleLikePainting(Long paintingId) {
-        Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new IllegalArgumentException("Painting not found"));
+        Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
         Profile currentProfile = profileService.getCurrentProfile();
         if(!painting.getLikes().contains(currentProfile)) {
             painting.addLike(currentProfile);
@@ -79,9 +83,9 @@ public class PaintingService extends AmazonS3Service {
     }
 
     public boolean visitPainting(Long paintingId) {
-        Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new IllegalArgumentException("Painting not found"));
+        Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
         Profile currentProfile = profileService.getCurrentProfile();
-        if(!painting.getVisits().contains(currentProfile)) {
+        if(!painting.getVisits().contains(currentProfile) && !painting.getProfile().equals(currentProfile)) {
             painting.addVisit(currentProfile);
             paintingRepository.save(painting);
             return true;
@@ -98,7 +102,7 @@ public class PaintingService extends AmazonS3Service {
             return filePath;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IllegalArgumentException("Error when uploading file");
+            throw new ServerErrorException("Error when uploading file");
         }
     }
 
@@ -114,8 +118,19 @@ public class PaintingService extends AmazonS3Service {
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException("Invalid file.");
+            throw new BadRequestException("Invalid file.");
         }
         return convFile;
+    }
+
+    private void validateAspectRatio(MultipartFile multipartFile) {
+        try {
+            BufferedImage image = ImageIO.read(multipartFile.getInputStream());
+            if(Math.round(((float) image.getWidth() / (float) image.getHeight()) * 100.0) / 100.0 != Math.round(((float) 7/11)* 100.0) / 100.0 ) {
+                throw new BadRequestException("Invalid aspect ratio of the painting.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
