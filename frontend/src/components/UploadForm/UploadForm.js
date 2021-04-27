@@ -15,7 +15,8 @@ const useStyles = makeStyles(theme => ({
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        minHeight: "100%"
+        minHeight: "100%",
+        maxWidth: "60vh"
     }
 }));
 
@@ -132,7 +133,6 @@ const UploadForm = () => {
                     setTags={setTags}
                     description={description}
                     setDescription={setDescription}
-                    file={file}
                     fileBase64={fileBase64}
                     error={error}
                     setError={setError}

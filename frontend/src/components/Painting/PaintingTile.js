@@ -84,7 +84,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = () => {}, showOptions, editable }) => {
+const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = () => {}, showOptions, editable, setEditMode, withoutDetails }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const isBigScreen = useMediaQuery("(min-width:800px) and (max-width:1500px)");
     const isLargeScreen = useMediaQuery("(min-width:1500px)");
@@ -104,7 +104,7 @@ const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = (
             >
                 {loading && <Loader />}
                 <div style={ { display: loading ? "none" : "block" } }>
-                    <PaintingTileHeader
+                    {!withoutDetails && <PaintingTileHeader
                         paintingId={id}
                         classes={classes}
                         avatar={avatar}
@@ -112,7 +112,8 @@ const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = (
                         author={author}
                         showOptions={showOptions}
                         editable={editable}
-                    />
+                        setEditMode={setEditMode}
+                    />}
                     <img
                         alt="preview"
                         src={src}
@@ -126,7 +127,7 @@ const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = (
                         }}
                         onClick={onClick || (() => {})}
                     />
-                    <PaintingTileBottomPanel />
+                    {!withoutDetails && <PaintingTileBottomPanel />}
                 </div>
             </div>
         </div>

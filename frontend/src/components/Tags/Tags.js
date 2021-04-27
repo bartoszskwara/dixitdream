@@ -19,13 +19,14 @@ const Tags = ({ tags, onTagDelete, disabled, className }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
 
     return <div className={cn(classes.tags, className)}>
-        {tags && tags.length > 0 ? tags.map(tag => <Chip
-            key={tag.label}
-            clickable={false}
-            className={classes.chip}
-            label={tag.label}
-            onDelete={!disabled ? () => onTagDelete(tag.label) : undefined}
-        />) : []}
+        {tags && tags.length > 0 ? tags.sort((t1, t2) => t1.label.toLowerCase().localeCompare(t2.label.toLowerCase()))
+            .map(tag => <Chip
+                key={tag.label}
+                clickable={false}
+                className={classes.chip}
+                label={tag.label}
+                onDelete={!disabled ? () => onTagDelete(tag.label) : undefined}
+            />) : []}
     </div>;
 };
 

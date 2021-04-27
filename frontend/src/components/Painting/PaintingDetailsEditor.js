@@ -6,6 +6,8 @@ import TextField from "@material-ui/core/TextField";
 import Button from "components/Input/Button";
 import { ReactComponent as PhotoUploadIcon } from "assets/images/photo-upload.svg";
 import TagsInput from "components/Tags/TagsInput";
+import FormControl from "@material-ui/core/FormControl";
+import {Checkbox, FormControlLabel, FormGroup, FormLabel} from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     paintingEditor: {
@@ -30,11 +32,20 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const PaintingDetailsEditor = ({title, setTitle, tags, setTags, description, setDescription, error, setError,
-    file, fileBase64, challengeData, onAction, showPreview, onPaintingPreviewDelete, actionButtonLabel }) => {
+    fileBase64, paintingUrl, challengeData, onAction, showPreview, onPaintingPreviewDelete, actionButtonLabel }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [saveDisabled, setSaveDisabled] = useState(true);
     const [loading, setLoading] = useState(false);
     const [tagsInputRef, setTagsInputRef] = useState(null);
+
+    useEffect(() => {
+        if(title) {
+            validate.title();
+        }
+        if(tags && tags.length) {
+            validate.tags();
+        }
+    }, []);
 
     useEffect(() => {
         if(challengeData && challengeData.tags) {
@@ -53,12 +64,6 @@ const PaintingDetailsEditor = ({title, setTitle, tags, setTags, description, set
             setSaveDisabled(false);
         }
     }, [error]);
-
-    useEffect(() => {
-        if(tagsInputRef) {
-            tagsInputRef.focus();
-        }
-    }, [tags]);
 
     const validate = {
         title: () => {
@@ -81,10 +86,18 @@ const PaintingDetailsEditor = ({title, setTitle, tags, setTags, description, set
         }
     };
 
-    const onTagAdded = (tag) => setTags(items => [...items, { label: tag.trim() }]);
+    const onTagAdded = (tag) => {
+        setTags(items => [...items, { label: tag.trim() }]);
+        if(tagsInputRef) {
+            tagsInputRef.focus();
+        }
+    }
     const onTagDelete = (tag) => {
         setTags(items => items.filter(i => i.label !== tag));
         validate.tags();
+        if(tagsInputRef) {
+            tagsInputRef.focus();
+        }
     }
 
     const handleAction = async () => {
@@ -95,9 +108,10 @@ const PaintingDetailsEditor = ({title, setTitle, tags, setTags, description, set
         setSaveDisabled(false);
     }
 
-    const preview = (file && fileBase64) ? <div key={file.name}>
+    const preview = (fileBase64 || paintingUrl) ? <div>
         <PaintingPreview
             fileBase64={fileBase64}
+            src={paintingUrl}
             onDelete={onPaintingPreviewDelete}
             error={error.file}
         />
@@ -130,7 +144,6 @@ const PaintingDetailsEditor = ({title, setTitle, tags, setTags, description, set
                 onTagDelete={onTagDelete}
                 onBlur={() => validate.tags()}
                 error={error.tags}
-                disabled={challengeData && challengeData.disabled}
                 setInputRef={(input) => setTagsInputRef(input)}
             />
             <TextField
@@ -146,6 +159,9 @@ const PaintingDetailsEditor = ({title, setTitle, tags, setTags, description, set
                 }}
                 className={classes.field}
             />
+            <div>
+
+            </div>
             <Button
                 disabled={saveDisabled}
                 className={classes.button}

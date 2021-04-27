@@ -1,5 +1,6 @@
 package com.dixitdream.backend.painting;
 
+import com.dixitdream.backend.challenge.ChallengeDto;
 import com.dixitdream.backend.dao.entity.Painting;
 import com.dixitdream.backend.dao.entity.Profile;
 import com.dixitdream.backend.dao.entity.Tag;
@@ -63,6 +64,10 @@ public class PaintingController {
                 .likes(painting.getLikes().size())
                 .liked(painting.getLikes().contains(currentProfile))
                 .visits(painting.getVisits().size())
+                .challenge(painting.getChallenge() != null ? ChallengeDto.builder()
+                        .id(painting.getChallenge().getId())
+                        .name(painting.getChallenge().getName())
+                        .build() : null)
                 .build();
         return ResponseEntity.ok(dto);
     }
@@ -92,6 +97,12 @@ public class PaintingController {
     public ResponseEntity<PaintingDto> uploadPainting(@Valid @ModelAttribute NewPaintingDto dto) {
         validatePainting(dto);
         Painting painting = paintingService.uploadPainting(dto.getTitle(), dto.getDescription(), dto.getTags(), dto.getChallengeId(), dto.getFile());
+        return ResponseEntity.ok(PaintingDto.builder().id(painting.getId()).build());
+    }
+
+    @PutMapping(value = "/{paintingId}")
+    public ResponseEntity<PaintingDto> updatePainting(@PathVariable Long paintingId, @Valid @RequestBody NewPaintingDto dto) {
+        Painting painting = paintingService.updatePainting(paintingId, dto.getTitle(), dto.getDescription(), dto.getTags());
         return ResponseEntity.ok(PaintingDto.builder().id(painting.getId()).build());
     }
 

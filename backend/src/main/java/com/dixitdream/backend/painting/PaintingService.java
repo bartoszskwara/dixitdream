@@ -63,6 +63,16 @@ public class PaintingService extends AmazonS3Service {
         return paintingRepository.save(painting);
     }
 
+    public Painting updatePainting(Long paintingId, String title, String description, Set<String> tags) {
+        Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
+        painting.setTitle(title);
+        painting.setDescription(description);
+        painting.removeTags(painting.getTags());
+        painting.addTags(tagMapper.mapTags(tags));
+        painting.setUpdateDate(new Timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000));
+        return paintingRepository.save(painting);
+    }
+
     public void deletePainting(Long paintingId) {
         Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
         String filePath = painting.getFilePath();

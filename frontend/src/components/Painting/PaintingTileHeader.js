@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOptions, editable }) => {
+const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOptions, editable, setEditMode }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const history = useHistory();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -107,16 +107,20 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
     };
 
     const menuItemsConfig = [{
+        key: "share",
         label: "Share",
         icon: <ShareIcon />,
         onClick: () => console.log("Sharing...")
     }, ...(editable ? [{
+        key: "divider",
         divider: true
     },{
+        key: "edit",
         label: "Edit",
         icon: <EditIcon />,
-        onClick: () => console.log("Editing...")
+        onClick: () => setEditMode(true)
     }, {
+        key: "delete",
         label: "Delete",
         icon: <DeleteIcon />,
         onClick: () => confirmDeletePainting()
@@ -125,9 +129,10 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
 
     const menuItems = menuItemsConfig.map(item => {
        if(item.divider) {
-           return <Divider />;
+           return <Divider key={item.key}/>;
        } else {
            return <MenuItem
+               key={item.key}
                onClick={() => {
                    if (item.onClick) {
                        item.onClick();

@@ -49,6 +49,10 @@ export const Api = {
         url: "/painting/{id}",
         method: "delete"
     },
+    updatePainting: {
+        url: "/painting/{id}",
+        method: "put"
+    },
     toggleLikePainting: {
         url: "/painting/{id}/like",
         method: "put"

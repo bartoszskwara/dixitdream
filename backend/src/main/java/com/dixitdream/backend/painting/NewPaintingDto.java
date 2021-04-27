@@ -21,7 +21,6 @@ public class NewPaintingDto {
     @NotEmpty(message = "Tags cannot be empty.")
     private Set<String> tags;
     private String description;
-    @NotNull
     private MultipartFile file;
     private Long challengeId;
 }

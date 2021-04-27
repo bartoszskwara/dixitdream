@@ -17,6 +17,7 @@ public interface PaintingRepository extends CrudRepository<Painting, Long>, Cust
     @Query(value = "select p from Painting p " +
             "left join fetch p.likes l " +
             "left join fetch p.visits v " +
+            "left join fetch p.challenge ch " +
             "where p.id = :paintingId")
     Optional<Painting> findByIdWithDetails(@Param("paintingId") Long paintingId);
 }

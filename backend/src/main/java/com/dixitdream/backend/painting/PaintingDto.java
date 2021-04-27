@@ -1,5 +1,6 @@
 package com.dixitdream.backend.painting;
 
+import com.dixitdream.backend.challenge.ChallengeDto;
 import com.dixitdream.backend.profile.ProfileDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,4 +24,5 @@ public class PaintingDto {
     private final Integer visits;
     private final Set<String> tags;
     private final Boolean editable;
+    private final ChallengeDto challenge;
 }

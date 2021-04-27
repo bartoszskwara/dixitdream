@@ -57,18 +57,19 @@ const getPlaceholders = (className) => ([
     <li key="placeholder7"><div className={className}></div></li>,
     <li key="placeholder8"><div className={className}></div></li>]);
 
-const TileWithContext = ({ painting, setImagesLoadedCount }) => {
+const TileWithContext = ({ painting, setImagesLoadedCount, withoutDetails }) => {
     const [paintingContext, setPaintingContext] = useState({ ...painting });
     const history = useHistory();
     return <PaintingContext.Provider value={{ paintingContext, setPaintingContext }}>
         <PaintingTile
             onClick={() => history.push("/painting/" + painting.id)}
             onLoad={() => setImagesLoadedCount(i => (i+1))}
+            withoutDetails={withoutDetails}
         />
     </PaintingContext.Provider>
 };
 
-const InfiniteTiles = ({ className, items, error, hasMore, scrollTarget, filter, filterRequired, fetchPaintings, loading }) => {
+const InfiniteTiles = ({ className, items, error, hasMore, scrollTarget, filter, filterRequired, fetchPaintings, loading, withoutDetails }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [imagesLoadedCount, setImagesLoadedCount] = useState(0);
     const [page, setPage] = useState(0);
@@ -109,7 +110,11 @@ const InfiniteTiles = ({ className, items, error, hasMore, scrollTarget, filter,
     }, [fetchingCount]);
 
     const tiles = [...items.map(p => (<li key={p.id}>
-        <TileWithContext painting={p} setImagesLoadedCount={setImagesLoadedCount} />
+        <TileWithContext
+            painting={p}
+            setImagesLoadedCount={setImagesLoadedCount}
+            withoutDetails={withoutDetails}
+        />
     </li>)), ...getPlaceholders(placeholderClass)];
 
     const fetchNext = () => {

@@ -35,6 +35,7 @@ public class Painting {
     private String filePath;
     @NotNull
     private Timestamp creationDate;
+    private Timestamp updateDate;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
@@ -64,6 +65,11 @@ public class Painting {
     public void addTags(Set<Tag> tags) {
         this.tags.addAll(tags);
         tags.forEach(t -> t.getPaintings().add(this));
+    }
+
+    public void removeTags(Set<Tag> tags) {
+        this.tags.removeAll(tags);
+        tags.forEach(t -> t.getPaintings().remove(this));
     }
 
     public void addLike(Profile profile) {

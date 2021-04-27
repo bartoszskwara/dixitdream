@@ -9,17 +9,35 @@ import NotFound from "../NotFound/NotFound";
 import Tags from "../Tags/Tags";
 import Card from "../Card/Card";
 import { PaintingContext } from "../contexts";
+import PaintingDetailsEditor from "./PaintingDetailsEditor";
 
 const useStyles = makeStyles(theme => ({
     paintingRoot: {
+        overflow: "auto",
+        flex: 1
+    },
+    painting: {
         display: "flex",
         alignItems: "center",
         flexDirection: "column",
-        flex: 1,
-        overflow: "auto",
+    },
+    paintingWrapper: {
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        maxWidth: "40vh",
+    },
+    paintingEditor: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        flex: 1
+    },
+    paintingEditorWrapper: {
+        maxWidth: "60vh",
+        width: "100%"
     },
     paintingContainer: {
-        maxWidth: "40vh",
         minWidth: "38vh"
     },
     paintingTile: {
@@ -30,22 +48,43 @@ const useStyles = makeStyles(theme => ({
     },
     bottomContent: {
         flex: 1,
-        marginTop: 5
+        marginTop: 5,
+        width: "100%",
+        paddingTop: 10
     },
     title: {
         fontSize: 20
     },
     description: {
         fontSize: 12
+    },
+    wrapper: {
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        flex: 1
+    },
+    tags: {
+        marginTop: 10
+    },
+    challenge: {
+        marginBottom: 5
     }
 }));
 
 const Painting = () => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const { paintingId } = useParams();
-    const [painting, setPainting]  = useState(false);
+    const [painting, setPainting]  = useState(null);
     const [loading, setLoading]  = useState(false);
     const [error, setError]  = useState(false);
+    const [editMode, setEditMode]  = useState(false);
+    const [titleEdit, setTitleEdit] = useState(null);
+    const [tagsEdit, setTagsEdit] = useState(null);
+    const [descriptionEdit, setDescriptionEdit] = useState(null);
+    const [editError, setEditError] = useState({
+        file: false
+    });
 
     const fetchPainting = async (paintingId) => {
         setLoading(true);
@@ -55,6 +94,9 @@ const Painting = () => {
             setLoading(false);
         } else {
             setPainting(data);
+            setTitleEdit(data.title);
+            setTagsEdit(data.tags.map(t => ({ label: t })));
+            setDescriptionEdit(data.description);
             setLoading(false);
             markPaintingAsVisited();
         }
@@ -67,6 +109,24 @@ const Painting = () => {
                 ...p,
                 visits: data.newVisit ? p.visits + 1 : p.visits
             }));
+        }
+    }
+
+    const updatePainting = async () => {
+        const postData = {
+            title: titleEdit,
+            tags: tagsEdit.map(t => t.label),
+            description: descriptionEdit
+        };
+        const response = await apiCall(Api.updatePainting, { pathParams: { id: paintingId }, postData });
+        if(!response.error) {
+            setPainting(p => ({
+                ...p,
+                title: titleEdit,
+                tags: tagsEdit.map(t => t.label),
+                description: descriptionEdit
+            }))
+            setEditMode(false);
         }
     }
 
@@ -86,21 +146,49 @@ const Painting = () => {
             <div className={classes.paintingRoot}>
                 {loading && <Loader />}
                 {error && <NotFound />}
-                {(!loading && painting) && <Card>
-                    <div className={classes.paintingContainer}>
-                        <PaintingTile
-                            className={classes.paintingTile}
-                            avatarVariant="outside"
-                            showOptions
-                            editable={painting.editable}
-                        />
-                    </div>
-                    <div className={classes.bottomContent}>
-                        <Tags tags={tags} disabled={true} />
-                        <p className={classes.title}>{painting.title}</p>
-                        <p className={classes.description}>{painting.description}</p>
-                    </div>
-                </Card>}
+                {(!loading && painting) && <>
+                    {!editMode && <div className={classes.painting}>
+                        <Card>
+                            <div className={classes.paintingWrapper}>
+                                <div className={classes.paintingContainer}>
+                                    <PaintingTile
+                                        className={classes.paintingTile}
+                                        avatarVariant="outside"
+                                        showOptions
+                                        editable={painting.editable}
+                                        setEditMode={setEditMode}
+                                    />
+                                </div>
+                                <div className={classes.bottomContent}>
+                                    {painting.challenge && <p className={classes.challenge}>{painting.challenge.name.toUpperCase()}</p>}
+                                    <p className={classes.title}>{painting.title}</p>
+                                    <p className={classes.description}>{painting.description}</p>
+                                    <Tags className={classes.tags} tags={tags} disabled={true} />
+                                </div>
+                            </div>
+                        </Card>
+                    </div>}
+                    {editMode && <div className={classes.paintingEditor}>
+                        <div className={classes.paintingEditorWrapper}>
+                            <Card>
+                                <PaintingDetailsEditor
+                                    title={titleEdit}
+                                    setTitle={setTitleEdit}
+                                    tags={tagsEdit}
+                                    setTags={setTagsEdit}
+                                    description={descriptionEdit}
+                                    setDescription={setDescriptionEdit}
+                                    paintingUrl={painting.url}
+                                    error={editError}
+                                    setError={setEditError}
+                                    onAction={updatePainting}
+                                    actionButtonLabel={"SAVE"}
+                                    showPreview={true}
+                                />
+                            </Card>
+                        </div>
+                    </div>}
+                </>}
             </div>
         </PaintingContext.Provider>
     )

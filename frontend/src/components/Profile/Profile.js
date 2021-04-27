@@ -68,6 +68,7 @@ const Profile = () => {
                 error={paintingsLoadingError}
                 scrollTarget="profile-root"
                 loading={paintingsLoading}
+                withoutDetails
             />}
         </div>
     );

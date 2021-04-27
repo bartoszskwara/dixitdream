@@ -41,16 +41,17 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const PaintingPreview = ({ fileBase64, onDelete, error }) => {
+const PaintingPreview = ({ fileBase64, src, onDelete, error }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [preview, setPreview] = useState(null);
 
     useEffect(() => {
         if (fileBase64) {
             setPreview(fileBase64);
+        } else if (src) {
+            setPreview(src)
         }
-    }, [fileBase64]);
-
+    }, [fileBase64, src]);
 
     return (
         <div className={classes.root}>
@@ -63,9 +64,9 @@ const PaintingPreview = ({ fileBase64, onDelete, error }) => {
                         <img alt="preview" src={preview} className={classes.preview} />
                     </div>
                     <div className={classes.box}>
-                        <IconButton onClick={onDelete ? onDelete : () => {}}>
+                        {onDelete && <IconButton onClick={onDelete}>
                             <DeleteIcon />
-                        </IconButton>
+                        </IconButton>}
                     </div>
                 </>
             }

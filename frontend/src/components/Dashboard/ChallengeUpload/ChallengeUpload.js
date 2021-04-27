@@ -64,7 +64,6 @@ const ChallengeUpload = ({ loading, error, challenge }) => {
                     onFilesUpload={() => {
                         setChallengeData({
                             challengeId: challenge.id,
-                            disabled: true,
                             tags: [...challenge.tags]
                         });
                         history.push("/upload");
