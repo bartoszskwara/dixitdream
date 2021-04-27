@@ -27,6 +27,8 @@ const UploadForm = () => {
     const { file, setFile, challengeData, setChallengeData, firstAttempt, setFirstAttempt, fileBase64, setFileBase64 } = useContext(UploadContext);
     const { refresh } = useContext(UserContext);
     const { setAlert } = useContext(AlertContext);
+    const [entryCropData, setEntryCropData] = useState(undefined);
+    const [croppedFileBase64, setCroppedFileBase64] = useState(null);
     const [showDropzone, setShowDropzone] = useState(false);
     const [showCrop, setShowCrop] = useState(false);
     const [title, setTitle] = useState("");
@@ -58,7 +60,7 @@ const UploadForm = () => {
             title,
             tags: tags.map(t => t.label),
             description,
-            file: await fetch(fileBase64).then((res) => res.blob())
+            file: await fetch(croppedFileBase64).then((res) => res.blob())
         };
         const response = await apiCall(Api.uploadPainting, { postData: data, isFormData: true });
         if(!response.error) {
@@ -94,7 +96,7 @@ const UploadForm = () => {
                 ...err,
                 file: ""
             }));
-            setFileBase64(newImage);
+            setCroppedFileBase64(newImage);
             setShowCrop(false);
             setCropLoading(false);
         }
@@ -113,12 +115,29 @@ const UploadForm = () => {
         }));
     }
 
+    const onPaintingPreviewDelete = () => {
+        setFile(null);
+        setFileBase64(null);
+        setEntryCropData(undefined);
+        setCroppedFileBase64(null);
+        validateFile();
+    };
+
+    const handleCropCancel = () => {
+        setShowCrop(false);
+        setFile(file && !croppedFileBase64 ? null : file);
+        validateFile(file && !croppedFileBase64 ? null : file);
+    };
+
     return (<div className={classes.flexContainer}>
         {showCrop && <Crop
             fileBase64={fileBase64}
             onCropComplete={onCropComplete}
             loading={cropLoading}
             error={error.file}
+            onCancel={handleCropCancel}
+            entryCropData={entryCropData}
+            setEntryCropData={setEntryCropData}
         />}
         {!showCrop && <Card>
             <div className={classes.flexContainer}>
@@ -133,15 +152,12 @@ const UploadForm = () => {
                     setTags={setTags}
                     description={description}
                     setDescription={setDescription}
-                    fileBase64={fileBase64}
+                    fileBase64={croppedFileBase64}
                     error={error}
                     setError={setError}
                     onAction={uploadPainting}
-                    onPaintingPreviewDelete={() => {
-                        setFile(null);
-                        setFileBase64(null);
-                        validateFile();
-                    }}
+                    onPaintingPreviewDelete={onPaintingPreviewDelete}
+                    onPaintingPreviewClick={() => setShowCrop(true)}
                     actionButtonLabel={"UPLOAD PAINTING"}
                     challengeData={challengeData}
                     showPreview={!showDropzone}

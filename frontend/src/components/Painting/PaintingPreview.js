@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const PaintingPreview = ({ fileBase64, src, onDelete, error }) => {
+const PaintingPreview = ({ fileBase64, src, onDelete, onClick, error }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [preview, setPreview] = useState(null);
 
@@ -60,7 +60,10 @@ const PaintingPreview = ({ fileBase64, src, onDelete, error }) => {
                 <>
                     <div className={classes.box}>
                     </div>
-                    <div className={cn(classes.container, { [classes.error]: error } )} >
+                    <div
+                        className={cn(classes.container, { [classes.error]: error } )}
+                        onClick={onClick}
+                    >
                         <img alt="preview" src={preview} className={classes.preview} />
                     </div>
                     <div className={classes.box}>

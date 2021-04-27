@@ -26,20 +26,20 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Crop = ({ fileBase64, onCropComplete, loading, error }) => {
+const Crop = ({ fileBase64, onCropComplete, loading, error, onCancel, entryCropData, setEntryCropData }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
-    const [crop, setCrop] = useState({
-        x: 0,
-        y: 0
-    });
+    const [crop, setCrop] = useState(entryCropData ? entryCropData.crop : { x: 0, y: 0 });
     const [cropArea, setCropArea] = useState(null);
-    const [zoom, setZoom] = useState(1);
-    const [aspect, setAspect] = useState( 7/11);
+    const [zoom, setZoom] = useState(entryCropData ? entryCropData.zoom : 1);
     const [cropCompleted, setCropCompleted] = useState( false);
 
     useEffect(() => {
         if(cropCompleted) {
             onCropComplete(cropArea);
+            setEntryCropData({
+                zoom,
+                crop
+            });
             setCropCompleted(false);
         }
     }, [cropCompleted])
@@ -59,7 +59,7 @@ const Crop = ({ fileBase64, onCropComplete, loading, error }) => {
                             image={fileBase64}
                             crop={crop}
                             zoom={zoom}
-                            aspect={aspect}
+                            aspect={7/11}
                             onCropChange={onCropChange}
                             onCropComplete={onCropSet}
                             onZoomChange={onZoomChange}
@@ -73,6 +73,13 @@ const Crop = ({ fileBase64, onCropComplete, loading, error }) => {
                         disabled={loading}
                     >
                         {loading ? <Loader /> : "CONTINUE"}
+                    </Button>
+                    <Button
+                        color="warning"
+                        className={classes.button}
+                        onClick={onCancel}
+                    >
+                        {"CANCEL"}
                     </Button>
                 </>}
             </Card>

@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const PaintingDetailsEditor = ({title, setTitle, tags, setTags, description, setDescription, error, setError,
-    fileBase64, paintingUrl, challengeData, onAction, showPreview, onPaintingPreviewDelete, actionButtonLabel }) => {
+    fileBase64, paintingUrl, challengeData, onAction, showPreview, onPaintingPreviewDelete, onPaintingPreviewClick, actionButtonLabel }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [saveDisabled, setSaveDisabled] = useState(true);
     const [loading, setLoading] = useState(false);
@@ -110,6 +110,7 @@ const PaintingDetailsEditor = ({title, setTitle, tags, setTags, description, set
 
     const preview = (fileBase64 || paintingUrl) ? <div>
         <PaintingPreview
+            onClick={onPaintingPreviewClick}
             fileBase64={fileBase64}
             src={paintingUrl}
             onDelete={onPaintingPreviewDelete}

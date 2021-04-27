@@ -83,7 +83,6 @@ const Dropzone = ({ children, disabled = false, error = false, onFilesUpload = (
     const {getRootProps, getInputProps } = useDropzone({
         accept: ["image/jpeg", "image/png"],
         maxFiles: 1,
-        //maxSize: 5242880,
         onDropAccepted: (acceptedFiles) => {
             setFile(acceptedFiles[0]);
             setFirstAttempt(false);
