@@ -75,7 +75,7 @@ const Crop = ({ fileBase64, onCropComplete, loading, error, onCancel, entryCropD
                         {loading ? <Loader /> : "CONTINUE"}
                     </Button>
                     <Button
-                        color="warning"
+                        color="secondary"
                         className={classes.button}
                         onClick={onCancel}
                     >

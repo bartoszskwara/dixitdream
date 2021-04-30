@@ -43,8 +43,8 @@ public abstract class AmazonS3Service {
         return format("https://%s.%s/%s", bucketName, s3Url, filePath);
     }
 
-    public String getFilePath(Long profileId) {
-        return format("%d/%d", profileId, new Date().getTime());
+    public String getFilePath(Long userId) {
+        return format("%d/%d", userId, new Date().getTime());
     }
 
     public void deleteObject(String filePath) {

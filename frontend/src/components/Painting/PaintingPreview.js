@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
         border: props => `1px solid ${props.colors.primary500}`,
         borderRadius: 4
     },
+    pointer: {
+        cursor: "pointer"
+    },
     error: {
         border: props => `1px solid ${props.colors.error}`
     },
@@ -61,7 +64,7 @@ const PaintingPreview = ({ fileBase64, src, onDelete, onClick, error }) => {
                     <div className={classes.box}>
                     </div>
                     <div
-                        className={cn(classes.container, { [classes.error]: error } )}
+                        className={cn(classes.container, { [classes.error]: error, [classes.pointer]: !!onClick } )}
                         onClick={onClick}
                     >
                         <img alt="preview" src={preview} className={classes.preview} />

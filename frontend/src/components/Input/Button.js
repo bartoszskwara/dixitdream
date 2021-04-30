@@ -16,6 +16,12 @@ const useStyles = makeStyles(theme => ({
             backgroundColor: props => props.colors.accent
         }
     },
+    containedSecondary: {
+        backgroundColor: props => props.colors.secondary50,
+        "&:hover": {
+            backgroundColor: props => props.colors.secondary50
+        }
+    },
     smallRoot: {
         fontSize: 15
     },
@@ -39,7 +45,8 @@ const ButtonWrapper = ({ children, className, variant = "contained", color = "pr
             disabled={disabled}
             classes={{
                 root: rootClass,
-                containedPrimary: classes.containedPrimary
+                containedPrimary: classes.containedPrimary,
+                containedSecondary: classes.containedSecondary
             }}
             startIcon={startIcon}
         >

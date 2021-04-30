@@ -1,4 +1,4 @@
-package com.dixitdream.backend.profile.validator;
+package com.dixitdream.backend.user.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = { ProfileUniqueValidator.class })
+@Constraint(validatedBy = { UserUniqueValidator.class })
 public @interface ShouldBeUnique {
-    String message() default "Profile is not unique.";
+    String message() default "User is not unique.";
 
     Class<?>[] groups() default {};
 

@@ -2,13 +2,13 @@ package com.dixitdream.backend.painting;
 
 import com.dixitdream.backend.challenge.ChallengeDto;
 import com.dixitdream.backend.dao.entity.Painting;
-import com.dixitdream.backend.dao.entity.Profile;
+import com.dixitdream.backend.dao.entity.UserProfile;
 import com.dixitdream.backend.dao.entity.Tag;
 import com.dixitdream.backend.dao.projection.PaintingProjectionDto;
 import com.dixitdream.backend.dto.ListContentDto;
 import com.dixitdream.backend.infrastructure.exception.BadRequestException;
-import com.dixitdream.backend.profile.ProfileDto;
-import com.dixitdream.backend.profile.ProfileService;
+import com.dixitdream.backend.user.UserDto;
+import com.dixitdream.backend.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,27 +42,27 @@ public class PaintingController {
     private Integer maxFileSizeMB;
 
     private final PaintingService paintingService;
-    private final ProfileService profileService;
+    private final UserService userService;
 
     @GetMapping(value = "/{paintingId}")
     public ResponseEntity<PaintingDto> getPainting(@PathVariable Long paintingId) {
         Painting painting = paintingService.getPainting(paintingId);
-        Profile currentProfile = profileService.getCurrentProfile();
-        boolean isCurrentProfileTheOwner = currentProfile.getId().equals(painting.getProfile().getId());
-        ProfileDto profileDto = ProfileDto.builder()
-                .id(painting.getProfile().getId())
-                .username(painting.getProfile().getUsername())
+        UserProfile currentUser = userService.getCurrentUser();
+        boolean isCurrentUserTheOwner = currentUser.getId().equals(painting.getUser().getId());
+        UserDto userDto = UserDto.builder()
+                .id(painting.getUser().getId())
+                .username(painting.getUser().getUsername())
                 .build();
         PaintingDto dto = PaintingDto.builder()
                 .id(painting.getId())
                 .url(paintingService.getFileUrl(painting.getFilePath()))
                 .title(painting.getTitle())
                 .description(painting.getDescription())
-                .profile(profileDto)
+                .user(userDto)
                 .tags(painting.getTags().stream().map(Tag::getName).collect(Collectors.toSet()))
-                .editable(isCurrentProfileTheOwner)
+                .editable(isCurrentUserTheOwner)
                 .likes(painting.getLikes().size())
-                .liked(painting.getLikes().contains(currentProfile))
+                .liked(painting.getLikes().contains(currentUser))
                 .visits(painting.getVisits().size())
                 .challenge(painting.getChallenge() != null ? ChallengeDto.builder()
                         .id(painting.getChallenge().getId())
@@ -77,16 +77,16 @@ public class PaintingController {
         String query = isNotEmpty(dto.getQuery()) ? dto.getQuery() : "";
         int limit = dto.getLimit() != null ? dto.getLimit() : 10;
         Collection<String> tags = CollectionUtils.emptyIfNull(dto.getTags());
-        List<PaintingProjectionDto> paintings = paintingService.getPaintings(query, limit, dto.getLastPaintingId(), tags, dto.getChallengeId(), dto.getProfileId());
+        List<PaintingProjectionDto> paintings = paintingService.getPaintings(query, limit, dto.getLastPaintingId(), tags, dto.getChallengeId(), dto.getUserId());
         List<PaintingDto> dtos = paintings.stream()
                 .map(p -> PaintingDto.builder()
                         .id(p.getId())
                         .url(paintingService.getFileUrl(p.getFilePath()))
-                        .profile(ProfileDto.builder()
-                                .id(p.getProfileId())
+                        .user(UserDto.builder()
+                                .id(p.getUserId())
                                 .build())
                         .likes(p.getLikes())
-                        .liked(p.isLikedByCurrentProfile())
+                        .liked(p.isLikedByCurrentUser())
                         .visits(p.getVisits())
                         .build())
                 .collect(Collectors.toList());

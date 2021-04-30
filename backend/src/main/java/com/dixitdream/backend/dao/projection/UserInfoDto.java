@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ProfileInfoDto {
+public class UserInfoDto {
     private final Long id;
     private final String username;
     private final int followers;

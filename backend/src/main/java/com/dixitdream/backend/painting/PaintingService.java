@@ -2,15 +2,15 @@ package com.dixitdream.backend.painting;
 
 import com.dixitdream.backend.dao.entity.Challenge;
 import com.dixitdream.backend.dao.entity.Painting;
-import com.dixitdream.backend.dao.entity.Profile;
+import com.dixitdream.backend.dao.entity.UserProfile;
 import com.dixitdream.backend.dao.projection.PaintingProjectionDto;
-import com.dixitdream.backend.dao.projection.ProfileInfoDto;
+import com.dixitdream.backend.dao.projection.UserInfoDto;
 import com.dixitdream.backend.dao.repository.ChallengeRepository;
 import com.dixitdream.backend.dao.repository.PaintingRepository;
 import com.dixitdream.backend.infrastructure.exception.BadRequestException;
 import com.dixitdream.backend.infrastructure.exception.ResourceNotFoundException;
 import com.dixitdream.backend.infrastructure.exception.ServerErrorException;
-import com.dixitdream.backend.profile.ProfileService;
+import com.dixitdream.backend.user.UserService;
 import com.dixitdream.backend.tags.TagMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ import java.util.Set;
 public class PaintingService extends AmazonS3Service {
 
     private final TagMapper tagMapper;
-    private final ProfileService profileService;
+    private final UserService userService;
     private final PaintingRepository paintingRepository;
     private final ChallengeRepository challengeRepository;
 
@@ -42,21 +42,21 @@ public class PaintingService extends AmazonS3Service {
         return paintingRepository.findByIdWithDetails(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
     }
 
-    public List<PaintingProjectionDto> getPaintings(String query, int limit, Long lastPaintingId, Collection<String> tags, Long challengeId, Long profileId) {
-        return paintingRepository.findPaintings(query, tags, challengeId, profileId, lastPaintingId, limit, profileService.getCurrentProfile());
+    public List<PaintingProjectionDto> getPaintings(String query, int limit, Long lastPaintingId, Collection<String> tags, Long challengeId, Long userId) {
+        return paintingRepository.findPaintings(query, tags, challengeId, userId, lastPaintingId, limit, userService.getCurrentUser());
     }
 
     public Painting uploadPainting(String title, String description, Set<String> tags, Long challengeId, MultipartFile multipartFile) {
-        ProfileInfoDto profile = profileService.getCurrentProfileInfo();
+        UserInfoDto user = userService.getCurrentUserInfo();
         validateAspectRatio(multipartFile);
-        String filePath = uploadFile(multipartFile, profile.getId());
+        String filePath = uploadFile(multipartFile, user.getId());
 
         Challenge challenge = challengeId != null ? challengeRepository.findById(challengeId).orElse(null) : null;
         Painting painting = new Painting();
         painting.setTitle(title);
         painting.setDescription(description);
         painting.addTags(tagMapper.mapTags(tags));
-        painting.setProfile(profileService.getCurrentProfile());
+        painting.setUser(userService.getCurrentUser());
         painting.setFilePath(filePath);
         painting.setChallenge(challenge);
         painting.setCreationDate(new Timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000));
@@ -83,20 +83,20 @@ public class PaintingService extends AmazonS3Service {
 
     public void toggleLikePainting(Long paintingId) {
         Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
-        Profile currentProfile = profileService.getCurrentProfile();
-        if(!painting.getLikes().contains(currentProfile)) {
-            painting.addLike(currentProfile);
+        UserProfile currentUser = userService.getCurrentUser();
+        if(!painting.getLikes().contains(currentUser)) {
+            painting.addLike(currentUser);
         } else {
-            painting.removeLike(currentProfile);
+            painting.removeLike(currentUser);
         }
         paintingRepository.save(painting);
     }
 
     public boolean visitPainting(Long paintingId) {
         Painting painting = paintingRepository.findById(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
-        Profile currentProfile = profileService.getCurrentProfile();
-        if(!painting.getVisits().contains(currentProfile) && !painting.getProfile().equals(currentProfile)) {
-            painting.addVisit(currentProfile);
+        UserProfile currentUser = userService.getCurrentUser();
+        if(!painting.getVisits().contains(currentUser) && !painting.getUser().equals(currentUser)) {
+            painting.addVisit(currentUser);
             paintingRepository.save(painting);
             return true;
         }

@@ -1,4 +1,4 @@
-package com.dixitdream.backend.profile;
+package com.dixitdream.backend.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,7 +9,7 @@ import lombok.Getter;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProfileDto {
+public class UserDto {
     private final Long id;
     private final String username;
     private final Integer followers;

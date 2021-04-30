@@ -20,7 +20,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-public class Profile {
+public class UserProfile {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -34,19 +34,20 @@ public class Profile {
     private String username;
     @NotNull
     private String email;
+    private String password;
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "followers",
-            joinColumns={@JoinColumn(name="profile_id", referencedColumnName="id")},
+            joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
             inverseJoinColumns={@JoinColumn(name="follower_id", referencedColumnName="id")}
     )
-    private Set<Profile> followers = new HashSet<>();
+    private Set<UserProfile> followers = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "followers", cascade = CascadeType.PERSIST)
-    private Set<Profile> following = new HashSet<>();
+    private Set<UserProfile> following = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "profile")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Painting> paintings = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "likes", cascade = CascadeType.PERSIST)

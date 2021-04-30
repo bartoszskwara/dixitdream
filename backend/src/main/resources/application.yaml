@@ -9,7 +9,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/dixitdream
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
   servlet:
     multipart:
@@ -31,3 +31,8 @@ aws:
   accessKey: AKIAZHJC4VWHZKAE4ZJT
   secretKey: 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
   bucketName: barytonn-paintings
+
+security:
+  issuer: dixitdreamapp
+  token-expiration-time: 900000
+  secret-key: dixitdreamsecretkey285479234

@@ -8,8 +8,8 @@ import lombok.Getter;
 public class PaintingProjectionDto {
     private final Long id;
     private final String filePath;
-    private final Long profileId;
+    private final Long userId;
     private final Integer visits;
     private final Integer likes;
-    private final boolean likedByCurrentProfile;
+    private final boolean likedByCurrentUser;
 }

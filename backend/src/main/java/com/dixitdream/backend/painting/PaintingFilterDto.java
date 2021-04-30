@@ -17,5 +17,5 @@ public class PaintingFilterDto {
     private Long lastPaintingId;
     private Set<String> tags;
     private Long challengeId;
-    private Long profileId;
+    private Long userId;
 }

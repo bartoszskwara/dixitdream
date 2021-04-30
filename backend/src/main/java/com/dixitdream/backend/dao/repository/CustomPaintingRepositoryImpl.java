@@ -2,7 +2,7 @@ package com.dixitdream.backend.dao.repository;
 
 import com.dixitdream.backend.dao.entity.Challenge;
 import com.dixitdream.backend.dao.entity.Painting;
-import com.dixitdream.backend.dao.entity.Profile;
+import com.dixitdream.backend.dao.entity.UserProfile;
 import com.dixitdream.backend.dao.entity.Tag;
 import com.dixitdream.backend.dao.projection.PaintingProjectionDto;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class CustomPaintingRepositoryImpl implements CustomPaintingRepository {
     private final EntityManager em;
 
     @Override
-    public List<PaintingProjectionDto> findPaintings(String query, Collection<String> tags, Long challengeId, Long profileId, Long lastPaintingId, int limit, Profile currentProfile) {
+    public List<PaintingProjectionDto> findPaintings(String query, Collection<String> tags, Long challengeId, Long userId, Long lastPaintingId, int limit, UserProfile currentUser) {
 
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<PaintingProjectionDto> criteriaQuery = builder.createQuery(PaintingProjectionDto.class);
@@ -47,9 +47,9 @@ public class CustomPaintingRepositoryImpl implements CustomPaintingRepository {
             predicates.add(builder.equal(challengeJoin.get("id"), challengeId));
         }
 
-        if(profileId != null) {
-            Join<Painting, Profile> profileJoin = root.join("profile");
-            predicates.add(builder.equal(profileJoin.get("id"), profileId));
+        if(userId != null) {
+            Join<Painting, UserProfile> userJoin = root.join("user");
+            predicates.add(builder.equal(userJoin.get("id"), userId));
         }
 
         if(isNotEmpty(query)) {
@@ -78,10 +78,10 @@ public class CustomPaintingRepositoryImpl implements CustomPaintingRepository {
                 .multiselect(
                         root.get("id"),
                         root.get("filePath"),
-                        root.get("profile").get("id"),
+                        root.get("user").get("id"),
                         builder.size(root.get("visits")),
                         builder.size(root.get("likes")),
-                        isLikedByCurrentProfile(criteriaQuery, builder, root, currentProfile.getId())
+                        isLikedByCurrentUser(criteriaQuery, builder, root, currentUser.getId())
                 );
         if(isNotEmpty(predicates)) {
             criteriaQuery.where(builder.and(predicates.toArray(new Predicate[0])));
@@ -90,13 +90,13 @@ public class CustomPaintingRepositoryImpl implements CustomPaintingRepository {
         return em.createQuery(criteriaQuery).setMaxResults(limit).getResultList();
     }
 
-    private Selection isLikedByCurrentProfile(CriteriaQuery<PaintingProjectionDto> criteriaQuery, CriteriaBuilder builder, Root<Painting> root, Long currentProfileId) {
+    private Selection isLikedByCurrentUser(CriteriaQuery<PaintingProjectionDto> criteriaQuery, CriteriaBuilder builder, Root<Painting> root, Long currentUserId) {
         Subquery<Long> likesSubQuery = criteriaQuery.subquery(Long.class);
         Root<Painting> likesSubRoot = likesSubQuery.from(Painting.class);
-        Join<Painting, Profile> likesJoin = likesSubRoot.join("likes");
+        Join<Painting, UserProfile> likesJoin = likesSubRoot.join("likes");
         likesSubQuery.select(builder.count(likesSubRoot.get("id")))
                 .where(builder.and(
-                        builder.equal(likesJoin.get("id"), currentProfileId),
+                        builder.equal(likesJoin.get("id"), currentUserId),
                         builder.equal(likesSubRoot.get("id"), root.get("id"))));
 
         return builder.selectCase()

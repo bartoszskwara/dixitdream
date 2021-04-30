@@ -27,7 +27,7 @@ public class Painting {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    private Profile profile;
+    private UserProfile user;
     @NotNull
     private String title;
     private String description;
@@ -51,16 +51,16 @@ public class Painting {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "likes",
             joinColumns={@JoinColumn(name="painting_id", referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="profile_id", referencedColumnName="id")}
+            inverseJoinColumns={@JoinColumn(name="user_id", referencedColumnName="id")}
     )
-    private Set<Profile> likes = new HashSet<>();
+    private Set<UserProfile> likes = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "visits",
             joinColumns={@JoinColumn(name="painting_id", referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="profile_id", referencedColumnName="id")}
+            inverseJoinColumns={@JoinColumn(name="user_id", referencedColumnName="id")}
     )
-    private Set<Profile> visits = new HashSet<>();
+    private Set<UserProfile> visits = new HashSet<>();
 
     public void addTags(Set<Tag> tags) {
         this.tags.addAll(tags);
@@ -72,18 +72,18 @@ public class Painting {
         tags.forEach(t -> t.getPaintings().remove(this));
     }
 
-    public void addLike(Profile profile) {
-        likes.add(profile);
+    public void addLike(UserProfile user) {
+        likes.add(user);
         likes.forEach(p -> p.getLikedPaintings().add(this));
     }
 
-    public void removeLike(Profile profile) {
-        likes.remove(profile);
+    public void removeLike(UserProfile user) {
+        likes.remove(user);
         likes.forEach(p -> p.getLikedPaintings().remove(this));
     }
 
-    public void addVisit(Profile profile) {
-        visits.add(profile);
+    public void addVisit(UserProfile user) {
+        visits.add(user);
         visits.forEach(p -> p.getVisitedPaintings().add(this));
     }
 }

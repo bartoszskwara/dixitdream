@@ -1,7 +1,7 @@
 package com.dixitdream.backend.painting;
 
 import com.dixitdream.backend.challenge.ChallengeDto;
-import com.dixitdream.backend.profile.ProfileDto;
+import com.dixitdream.backend.user.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -18,7 +18,7 @@ public class PaintingDto {
     private final String url;
     private final String title;
     private final String description;
-    private final ProfileDto profile;
+    private final UserDto user;
     private final Integer likes;
     private final Boolean liked;
     private final Integer visits;
