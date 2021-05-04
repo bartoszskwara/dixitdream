@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import cn from "classnames";
-import Loader from "../Loader/Loader";
+import Loader from "components/Loader/Loader";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import PaintingTileBottomPanel from "./PaintingTileBottomPanel";
 import PaintingTileHeader from "./PaintingTileHeader";

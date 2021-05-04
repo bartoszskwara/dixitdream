@@ -4,7 +4,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import {useDropzone} from 'react-dropzone'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import {SettingsContext, UploadContext} from "components/contexts";
-import Loader from "../../Loader/Loader";
+import Loader from "components/Loader/Loader";
 import cn from "classnames";
 
 const useStyles = makeStyles(theme => ({

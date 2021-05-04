@@ -7,7 +7,7 @@ import UserPicture from "assets/images/user.png";
 import Loader from "components/Loader/Loader";
 import cn from "classnames";
 import {Api, apiCall} from "../../api/Api";
-import Error from "../Error/Error";
+import Error from "components/Error/Error";
 
 const useStyles = makeStyles(theme => ({
     userSummaryRoot: {

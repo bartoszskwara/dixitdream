@@ -3,7 +3,7 @@ import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import SearchIcon from '@material-ui/icons/Search';
 import InfiniteTiles from "components/Painting/InfiniteTiles";
-import TagsInput from "../Tags/TagsInput";
+import TagsInput from "components/Tags/TagsInput";
 import useDebounce from "hooks/useDebounce";
 import {Api, apiCall} from "api/Api";
 

@@ -6,7 +6,7 @@ import Loader from "components/Loader/Loader";
 import Countdown from "./Countdown";
 import ChallengeTags from "./ChallengeTags";
 import {useHistory} from "react-router";
-import {UploadContext} from "../../contexts";
+import {UploadContext} from "components/contexts";
 
 const useStyles = makeStyles(theme => ({
     root: {

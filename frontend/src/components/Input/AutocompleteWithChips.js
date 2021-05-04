@@ -7,10 +7,10 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import cn from "classnames";
-import Tags from "../Tags/Tags";
+import Tags from "components/Tags/Tags";
 import {TextField} from "@material-ui/core";
 import {Autocomplete} from "@material-ui/lab";
-import Loader from "../Loader/Loader";
+import Loader from "components/Loader/Loader";
 
 const useStyles = makeStyles(theme => ({
     root: {

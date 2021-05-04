@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import Loader from "../Loader/Loader";
+import Loader from "components/Loader/Loader";
 import {makeStyles} from "@material-ui/core/styles";
 import {ThemeContext} from "../themes";
 import DeleteIcon from '@material-ui/icons/Delete';

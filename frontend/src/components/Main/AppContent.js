@@ -12,10 +12,10 @@ import Explore from "components/Explore/Explore";
 import {Api, apiCall} from "api/Api";
 import Painting from "components/Painting/Painting";
 import User from "components/User/User";
-import Alert from "../Alert/Alert";
-import Loader from "../Loader/Loader";
+import Alert from "components/Alert/Alert";
+import Loader from "components/Loader/Loader";
 import UploadContextProvider from "./UploadContextProvider";
-import Dialog from "../Dialog/Dialog";
+import Dialog from "components/Dialog/Dialog";
 
 const useStyles = makeStyles({
     mainRoot: {

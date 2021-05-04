@@ -4,10 +4,10 @@ import {makeStyles} from "@material-ui/core/styles";
 import {useParams} from "react-router";
 import PaintingTile from "./PaintingTile";
 import {Api, apiCall} from "../../api/Api";
-import Loader from "../Loader/Loader";
-import NotFound from "../NotFound/NotFound";
-import Tags from "../Tags/Tags";
-import Card from "../Card/Card";
+import Loader from "components/Loader/Loader";
+import NotFound from "components/NotFound/NotFound";
+import Tags from "components/Tags/Tags";
+import Card from "components/Card/Card";
 import {PaintingContext} from "../contexts";
 import PaintingDetailsEditor from "./PaintingDetailsEditor";
 

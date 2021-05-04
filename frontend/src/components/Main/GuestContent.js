@@ -2,7 +2,7 @@ import React, {useContext} from 'react'
 import {ThemeContext} from "components/themes";
 import {AlertContext} from "components/contexts";
 import {makeStyles} from "@material-ui/core"
-import Alert from "../Alert/Alert";
+import Alert from "components/Alert/Alert";
 import Login from "./Login";
 
 const useStyles = makeStyles({

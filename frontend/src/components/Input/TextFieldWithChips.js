@@ -8,7 +8,7 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import cn from "classnames";
-import Tags from "../Tags/Tags";
+import Tags from "components/Tags/Tags";
 
 const useStyles = makeStyles(theme => ({
     root: {

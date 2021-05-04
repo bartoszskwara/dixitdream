@@ -4,7 +4,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import PaintingPreview from "components/Painting/PaintingPreview";
 import {ReactComponent as PhotoUploadIcon} from "assets/images/photo-upload.svg";
 import TagsInput from "components/Tags/TagsInput";
-import CustomForm from "../Input/CustomForm";
+import CustomForm from "components/Input/CustomForm";
 import {GlobalLoadingContext} from "../contexts";
 
 const useStyles = makeStyles(theme => ({
