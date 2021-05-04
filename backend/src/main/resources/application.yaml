@@ -34,5 +34,6 @@ aws:
 
 security:
   issuer: dixitdreamapp
-  token-expiration-time: 900000
+  access-token-expiration-time: 10000
+  refresh-token-expiration-time: 60000
   secret-key: dixitdreamsecretkey285479234

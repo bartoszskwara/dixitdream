@@ -2,11 +2,9 @@ import React, {useContext, useEffect, useState} from "react";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import cn from "classnames";
-import {Chip} from "@material-ui/core";
 import AutocompleteWithChips from "../Input/AutocompleteWithChips";
 import {Api, apiCall} from "../../api/Api";
 import useDebounce from "../../hooks/useDebounce";
-import {Autocomplete} from "@material-ui/lab";
 
 const useStyles = makeStyles(theme => ({
     suggestion: {

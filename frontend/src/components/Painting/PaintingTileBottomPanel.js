@@ -1,11 +1,11 @@
-import React, {useContext, useEffect} from 'react'
+import React, {useContext} from 'react'
 import {ThemeContext} from 'components/themes'
 import {makeStyles} from '@material-ui/core/styles';
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import cn from "classnames";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import {Api, apiCall} from "../../api/Api";
-import { AlertContext, PaintingContext } from "../contexts";
+import {AlertContext, PaintingContext} from "../contexts";
 
 const useStyles = makeStyles(theme => ({
     info: {

@@ -1,6 +1,6 @@
-import React, {useEffect, useContext, useCallback, useState} from 'react'
-import { ThemeContext } from 'components/themes';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {useCallback, useContext, useEffect, useState} from 'react'
+import {ThemeContext} from 'components/themes';
+import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
     root: {

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import PaintingTile from "./PaintingTile";
@@ -7,7 +7,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {useHistory} from "react-router";
 import cn from "classnames";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { PaintingContext } from "../contexts";
+import {PaintingContext} from "../contexts";
 
 const useStyles = makeStyles(theme => ({
     root: {

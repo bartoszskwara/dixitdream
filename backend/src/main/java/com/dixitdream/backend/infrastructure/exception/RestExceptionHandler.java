@@ -49,4 +49,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ResponseErrorDto errorDto = new ResponseErrorDto(ex.getMessage());
         return handleExceptionInternal(ex, errorDto, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    protected ResponseEntity<Object> handleForbidden(RuntimeException ex, WebRequest request) {
+        ResponseErrorDto errorDto = new ResponseErrorDto(ex.getMessage());
+        return handleExceptionInternal(ex, errorDto, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
 }

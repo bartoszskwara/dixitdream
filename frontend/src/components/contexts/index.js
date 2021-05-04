@@ -25,5 +25,7 @@ export const UploadContext = React.createContext({
     setFileBase64: () => {}
 });
 export const UserContext = React.createContext({
-    loading: false
+    loading: false,
+    authenticated: false,
+    authenticate: () => {}
 });

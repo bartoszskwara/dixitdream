@@ -33,12 +33,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         final String token = header.split(" ")[1].trim();
-        if (!jwtTokenUtil.validate(token)) {
+        if (!jwtTokenUtil.validateAccessToken(token)) {
             chain.doFilter(request, response);
             return;
         }
 
-        UserDetails userDetails = userAuthenticationService.loadUserByUsername(jwtTokenUtil.getUsername(token));
+        UserDetails userDetails = userAuthenticationService.loadUserByUsername(jwtTokenUtil.getEmail(token));
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails == null ? List.of() : userDetails.getAuthorities());

@@ -1,17 +1,86 @@
 import axios from "axios";
 
+const apiState = {
+    refreshing: false
+};
+
 const axiosInstance = axios.create({
     baseURL: process.env.REACT_APP_SERVER_URL
 });
+axiosInstance.interceptors.request.use(
+    (config) => {
+        config.headers = {
+            ...config.headers,
+            ...(localStorage.getItem("accessToken") ? { "Authorization": `Bearer ${localStorage.getItem("accessToken")}` } : {} )
+        }
+        return config;
+    }
+);
+axiosInstance.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    async (error) => {
+        const originalRequest = error.config;
+        let refreshToken = localStorage.getItem("refreshToken");
+        if (refreshToken && error.response.status === 401) {
+            if(!apiState.refreshing) {
+                apiState.refreshing = true;
+                await refreshTokenAndPerformRequest( { refreshToken } );
+                return axiosInstance(originalRequest);
+            } else {
+                return new Promise(resolve => {
+                    const interval = setInterval(() => {
+                        if(!apiState.refreshing) {
+                            resolve(axiosInstance(originalRequest));
+                            clearInterval(interval);
+                        }
+                    }, 100);
+                });
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
+const refreshTokenAndPerformRequest = async ({ refreshToken }) => {
+    try {
+        const response = await axiosInstance({
+            ...Api.refreshToken,
+            data: { refreshToken },
+            headers: {
+                "Access-Control-Allow-Origin": "*"
+            }
+        });
+        if (response.status === 200) {
+            localStorage.setItem("accessToken", response.data.accessToken);
+        }
+    } catch (refreshError) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.dispatchEvent(new Event("ACCESS_TOKEN_EVENT"));
+    }
+    apiState.refreshing = false;
+}
 
 export const Api = {
-    getCurrentProfile: {
-        url: "/profile/current",
+    authenticate: {
+        url: "/auth/login",
+        method: "post",
+        responseType: "json"
+    },
+    refreshToken: {
+        url: "/auth/refresh",
+        method: "post",
+        responseType: "json"
+    },
+    getCurrentUser: {
+        url: "/user/current",
         method: "get",
         responseType: "json"
     },
-    getProfile: {
-        url: "/profile/{id}",
+    getUser: {
+        url: "/user/{id}",
         method: "get",
         responseType: "json"
     },
@@ -79,11 +148,11 @@ export const apiCall = async (api, { pathParams, urlParams, postData, isFormData
         }, apiCall.url);
     }
     if(urlParams && Object.keys(urlParams).length) {
-        apiCall.url = `${apiCall.url}?`;
-        apiCall.url = Object.keys(urlParams).reduce((url, key) => {
-            return `${url}${key}=${urlParams[key]}&`;
-        }, apiCall.url);
-        apiCall.url = apiCall.url.replace(/&$/, "");
+        const urlParameters = Object.keys(urlParams).reduce((params, key) => {
+            params.set(key, urlParams[key]);
+            return params;
+        }, new URLSearchParams());
+        apiCall.url = `${apiCall.url}?${urlParameters.toString()}`.replace(/&$/, "");
     }
 
     const data = isFormData ? formData(postData) : postData;
@@ -92,11 +161,17 @@ export const apiCall = async (api, { pathParams, urlParams, postData, isFormData
             ...apiCall,
             ...(data ? { data } : {} ),
             headers: {
-                'Access-Control-Allow-Origin': "*"
+                "Access-Control-Allow-Origin": "*"
             }
         });
         return response ? response.data : {};
     } catch(error) {
-        return error.response && error.response.data ? error.response.data : { error: "Unexpected error." };
+        return error.response && error.response.data ? {
+            ...error.response.data,
+            status: error.response.status
+        } : {
+            status: error.response.status,
+            error: "Unexpected error."
+        };
     }
 };

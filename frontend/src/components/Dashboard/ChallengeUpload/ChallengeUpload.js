@@ -1,12 +1,12 @@
-import React, {useContext, useState, useEffect} from 'react'
-import { ThemeContext } from 'components/themes';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {useContext, useState} from 'react'
+import {ThemeContext} from 'components/themes';
+import {makeStyles} from '@material-ui/core/styles';
 import Dropzone from "./Dropzone";
 import Loader from "components/Loader/Loader";
 import Countdown from "./Countdown";
 import ChallengeTags from "./ChallengeTags";
 import {useHistory} from "react-router";
-import { UploadContext } from "../../contexts";
+import {UploadContext} from "../../contexts";
 
 const useStyles = makeStyles(theme => ({
     root: {

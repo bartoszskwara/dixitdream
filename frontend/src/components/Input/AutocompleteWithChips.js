@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from "prop-types";
-import { ThemeContext } from 'components/themes'
-import { makeStyles } from '@material-ui/core/styles';
+import {ThemeContext} from 'components/themes'
+import {makeStyles} from '@material-ui/core/styles';
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import InputLabel from "@material-ui/core/InputLabel";

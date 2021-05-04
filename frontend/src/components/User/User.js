@@ -4,10 +4,9 @@ import {makeStyles} from "@material-ui/core/styles";
 import {useParams} from "react-router";
 import {Api, apiCall} from "api/Api";
 import InfiniteTiles from "components/Painting/InfiniteTiles";
-import ProfileSummary from "./ProfileSummary";
 
 const useStyles = makeStyles(theme => ({
-    profileRoot: {
+    userRoot: {
         flex: 1,
         padding: 10,
         overflow: "auto"
@@ -18,26 +17,26 @@ const useStyles = makeStyles(theme => ({
 }));
 const LIMIT = Number(process.env.REACT_APP_INFINITE_SCROLL_LIMIT);
 
-const Profile = () => {
+const User = () => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [paintings, setPaintings] = useState([]);
     const [paintingsLoading, setPaintingsLoading] = useState(false);
     const [paintingsLoadingError, setPaintingsLoadingError] = useState(false);
     const [shouldFetchMore, setShouldFetchMore] = useState(true);
     const [filter, setFilter] = useState(undefined);
-    const { profileId } = useParams();
+    const { userId } = useParams();
 
     useEffect(() => {
-        if(profileId) {
-            setFilter({ profileId });
+        if(userId) {
+            setFilter({ userId });
         }
-    }, [profileId]);
+    }, [userId]);
 
-    const fetchProfilePaintings = async ({ profileId, next, lastPaintingId }) => {
+    const fetchUserPaintings = async ({ userId, next, lastPaintingId }) => {
         setPaintingsLoading(true);
         const data = await apiCall(Api.getPaintings, {
             postData: {
-                profileId,
+                userId,
                 limit: LIMIT,
                 ...(next && lastPaintingId ? { lastPaintingId } : {} )
             }
@@ -52,21 +51,21 @@ const Profile = () => {
     }
 
     return (
-        <div id="profile-root" className={classes.profileRoot}>
-            <ProfileSummary
-                id={profileId}
+        <div id="user-root" className={classes.userRoot}>
+            <UserSummary
+                id={userId}
                 detailed
                 color="secondary"
             />
-            {profileId && <InfiniteTiles
+            {userId && <InfiniteTiles
                 className={classes.tiles}
                 items={paintings}
-                fetchPaintings={fetchProfilePaintings}
+                fetchPaintings={fetchUserPaintings}
                 filter={filter}
                 filterRequired
                 hasMore={shouldFetchMore && !paintingsLoadingError}
                 error={paintingsLoadingError}
-                scrollTarget="profile-root"
+                scrollTarget="user-root"
                 loading={paintingsLoading}
                 withoutDetails
             />}
@@ -74,4 +73,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default User;

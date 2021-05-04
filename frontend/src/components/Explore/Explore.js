@@ -1,4 +1,4 @@
-import React, { useContext, useState} from "react";
+import React, {useContext, useState} from "react";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import SearchIcon from '@material-ui/icons/Search';

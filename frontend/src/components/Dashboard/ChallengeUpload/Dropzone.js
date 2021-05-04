@@ -1,9 +1,9 @@
-import React, { useContext } from 'react'
-import { ThemeContext } from 'components/themes';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {useContext} from 'react'
+import {ThemeContext} from 'components/themes';
+import {makeStyles} from '@material-ui/core/styles';
 import {useDropzone} from 'react-dropzone'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { SettingsContext, UploadContext } from "components/contexts";
+import {SettingsContext, UploadContext} from "components/contexts";
 import Loader from "../../Loader/Loader";
 import cn from "classnames";
 

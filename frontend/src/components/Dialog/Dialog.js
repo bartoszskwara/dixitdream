@@ -1,7 +1,7 @@
 import React, {useContext} from 'react'
-import { ThemeContext } from 'components/themes'
-import { makeStyles } from '@material-ui/core/styles';
-import { DialogContext } from "components/contexts";
+import {ThemeContext} from 'components/themes'
+import {makeStyles} from '@material-ui/core/styles';
+import {DialogContext} from "components/contexts";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@material-ui/core";
 import Button from "../Input/Button";
 

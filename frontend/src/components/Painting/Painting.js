@@ -8,7 +8,7 @@ import Loader from "../Loader/Loader";
 import NotFound from "../NotFound/NotFound";
 import Tags from "../Tags/Tags";
 import Card from "../Card/Card";
-import { PaintingContext } from "../contexts";
+import {PaintingContext} from "../contexts";
 import PaintingDetailsEditor from "./PaintingDetailsEditor";
 
 const useStyles = makeStyles(theme => ({

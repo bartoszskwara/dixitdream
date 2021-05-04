@@ -1,7 +1,7 @@
-import React, {useContext, useEffect, useState } from 'react'
-import { ThemeContext } from 'components/themes'
-import { makeStyles } from '@material-ui/core/styles';
-import { UploadContext, UserContext, AlertContext } from "components/contexts";
+import React, {useContext, useEffect, useState} from 'react'
+import {ThemeContext} from 'components/themes'
+import {makeStyles} from '@material-ui/core/styles';
+import {AlertContext, UploadContext, UserContext} from "components/contexts";
 import Dropzone from "components/Dashboard/ChallengeUpload/Dropzone";
 import {Api, apiCall} from "../../api/Api";
 import {useHistory} from "react-router";

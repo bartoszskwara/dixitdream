@@ -1,18 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react'
-import { ThemeContext } from 'components/themes';
-import { UserContext } from 'components/contexts';
-import { makeStyles } from '@material-ui/core/styles';
+import {ThemeContext} from 'components/themes';
+import {UserContext} from 'components/contexts';
+import {makeStyles} from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-import ProfilePicture from "assets/images/profile.png";
+import UserPicture from "assets/images/user.png";
 import Loader from "components/Loader/Loader";
-import {useHistory} from "react-router";
 import cn from "classnames";
 import {Api, apiCall} from "../../api/Api";
-import NotFound from "../NotFound/NotFound";
 import Error from "../Error/Error";
 
 const useStyles = makeStyles(theme => ({
-    profileSummaryRoot: {
+    userSummaryRoot: {
         padding: 10,
         border: appTheme => `1px solid ${appTheme.colors.primary700}`,
         borderRadius: 4
@@ -51,62 +49,62 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const ProfileSummary = ({ id, detailed = false, color = "primary", onClick }) => {
+const UserSummary = ({ id, detailed = false, color = "primary", onClick }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const userContext = useContext(UserContext);
-    const [profile, setProfile] = useState(null);
-    const [profileLoading, setProfileLoading] = useState(false);
-    const [profileLoadingError, setProfileLoadingError] = useState(null);
+    const [user, setUser] = useState(null);
+    const [userLoading, setUserLoading] = useState(false);
+    const [userLoadingError, setUserLoadingError] = useState(null);
 
     useEffect(() => {
         if(id) {
-            fetchProfile({ profileId: id });
+            fetchUser({ userId: id });
         }
     }, [id]);
 
-    const fetchProfile = async ({ profileId }) => {
-        setProfileLoading(true);
-        const data = await apiCall(Api.getProfile, { pathParams: { id: profileId }});
+    const fetchUser = async ({ userId }) => {
+        setUserLoading(true);
+        const data = await apiCall(Api.getUser, { pathParams: { id: userId }});
         if(!data.error) {
-            setProfile(data);
-            setProfileLoading(false);
+            setUser(data);
+            setUserLoading(false);
         } else {
-            setProfileLoadingError(data.error);
-            setProfileLoading(false);
+            setUserLoadingError(data.error);
+            setUserLoading(false);
         }
     }
 
-    const profileData = id ? profile : userContext;
+    const userData = id ? user : userContext;
 
     return (
         <div
-            className={cn(classes.profileSummaryRoot, {
+            className={cn(classes.userSummaryRoot, {
                 [classes.rootPrimary]: color === "primary",
                 [classes.rootSecondary]: color === "secondary"
             })}
             onClick={onClick ? onClick : () => {} }
         >
-            {profileLoadingError && <Error message={profileLoadingError}/>}
-            {(profileLoading || (!id && (!profileData || !profileData.id))) && <Loader />}
-            {profileData && <>
-                {profileData.id && <>
+            {userLoadingError && <Error message={userLoadingError}/>}
+            {(userLoading || (!id && (!userData || !userData.id))) && <Loader />}
+            {userData && <>
+                {userData.id && <>
                     <div className={classes.container}>
                         <div>
-                            <Avatar alt={profileData.name} src={ProfilePicture} className={classes.avatar} />
+                            <Avatar alt={userData.name} src={UserPicture} className={classes.avatar} />
                         </div>
                         <div className={classes.userData}>
                             <div className={classes.title}>
-                                {profileData.username}
+                                {userData.username}
                             </div>
                             <div className={classes.stats}>
-                                <span>{profileData.followers} followers</span>
+                                <span>{userData.followers} followers</span>
                                 <span className={classes.divider}>&#8226;</span>
-                                <span>{profileData.paintings} {profileData.paintings > 1 ? "paintings" : "painting"}</span>
+                                <span>{userData.paintings} {userData.paintings > 1 ? "paintings" : "painting"}</span>
                             </div>
                         </div>
                     </div>
                     {detailed && <div className={classes.detailed}>
-                        <p>{profileData.description}</p>
+                        <p>{userData.description}</p>
                     </div>}
                 </>}
             </>}
@@ -114,4 +112,4 @@ const ProfileSummary = ({ id, detailed = false, color = "primary", onClick }) =>
     );
 }
 
-export default ProfileSummary;
+export default UserSummary;

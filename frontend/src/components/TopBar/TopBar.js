@@ -1,13 +1,12 @@
 import React, {useContext} from 'react'
-import { ThemeContext } from 'components/themes'
-import { makeStyles } from '@material-ui/core/styles';
+import {ThemeContext} from 'components/themes'
+import {makeStyles} from '@material-ui/core/styles';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import {useHistory} from "react-router";
-import {ReactComponent as AddIcon} from "../../assets/images/add2.svg";
 import IconButton from "@material-ui/core/IconButton";
 
 const useStyles = makeStyles(theme => ({
-    root: {
+    topBarRoot: {
         display: "flex",
         flex: 1,
         justifyContent: "space-between",
@@ -32,7 +31,7 @@ const TopBar = () => {
     const goHome = () => history.push("/");
 
     return (
-        <div className={classes.root}>
+        <div className={classes.topBarRoot}>
             <p className={classes.title} onClick={goHome}>DIXIT DREAM</p>
             <IconButton onClick={() => history.push("")}>
                 <NotificationsIcon classes={{

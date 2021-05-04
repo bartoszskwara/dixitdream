@@ -6,7 +6,7 @@ import Loader from "../Loader/Loader";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import PaintingTileBottomPanel from "./PaintingTileBottomPanel";
 import PaintingTileHeader from "./PaintingTileHeader";
-import { PaintingContext } from "../contexts";
+import {PaintingContext} from "../contexts";
 
 const useStyles = makeStyles(theme => ({
     paintingTileContainer: {
@@ -89,7 +89,7 @@ const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = (
     const isBigScreen = useMediaQuery("(min-width:800px) and (max-width:1500px)");
     const isLargeScreen = useMediaQuery("(min-width:1500px)");
     const [loading, setLoading] = useState(true);
-    const { paintingContext: { id, url: src, avatar, profile: author } } = useContext(PaintingContext);
+    const { paintingContext: { id, url: src, avatar, user: author } } = useContext(PaintingContext);
 
     return (
         <div className={cn(classes.paintingTileContainer, className)}>

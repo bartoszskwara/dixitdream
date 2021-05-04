@@ -13,9 +13,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LoginRequestDto {
+public class RefreshRequestDto {
     @NotBlank
-    private String email;
-    @NotBlank
-    private String password;
+    private String refreshToken;
 }

@@ -7,7 +7,7 @@ import {useHistory} from "react-router";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import {Divider, ListItemIcon, ListItemText, Menu, MenuItem} from "@material-ui/core";
 import {Api, apiCall} from "../../api/Api";
-import { AlertContext, GlobalLoadingContext, DialogContext } from "components/contexts";
+import {AlertContext, DialogContext, GlobalLoadingContext} from "components/contexts";
 import ShareIcon from '@material-ui/icons/Share';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';

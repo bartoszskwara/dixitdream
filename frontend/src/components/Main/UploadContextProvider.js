@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { UploadContext } from "components/contexts";
+import {UploadContext} from "components/contexts";
 
 const UploadContextProvider = ({ children }) => {
     const [currentUploadFile, setCurrentUploadFile] = useState(null);

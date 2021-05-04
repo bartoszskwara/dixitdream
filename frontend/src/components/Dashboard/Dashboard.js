@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react'
-import { ThemeContext } from 'components/themes'
-import { makeStyles } from '@material-ui/core/styles';
+import React, {useContext, useEffect, useMemo, useState} from 'react'
+import {ThemeContext} from 'components/themes'
+import {makeStyles} from '@material-ui/core/styles';
 import ChallengeUpload from "./ChallengeUpload/ChallengeUpload";
 import InfiniteTiles from "components/Painting/InfiniteTiles";
 import {Api, apiCall} from "api/Api";
-import ProfileSummary from "components/Profile/ProfileSummary";
 import {useHistory} from "react-router";
-import { UserContext } from "components/contexts";
+import {UserContext} from "components/contexts";
 
 const useStyles = makeStyles(theme => ({
     dashboardRoot: {
@@ -30,7 +29,7 @@ const Dashboard = () => {
     const [paintingsLoadingError, setPaintingsLoadingError] = useState(false);
     const [shouldFetchMore, setShouldFetchMore] = useState(true);
     const history = useHistory();
-    const { id: profileId } = useContext(UserContext);
+    const { id: userId } = useContext(UserContext);
 
     useEffect(() => {
         fetchChallengeData();
@@ -70,8 +69,8 @@ const Dashboard = () => {
 
     return (
         <div id="dashboard-root" className={classes.dashboardRoot}>
-            <ProfileSummary
-                onClick={() => history.push(`/profile/${profileId}`)}
+            <UserSummary
+                onClick={() => history.push(`/user/${userId}`)}
             />
             <ChallengeUpload
                 challenge={challenge}

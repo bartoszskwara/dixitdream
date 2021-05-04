@@ -1,16 +1,16 @@
 import React, {useContext} from 'react'
-import { ThemeContext } from 'components/themes'
-import { makeStyles } from '@material-ui/core/styles';
+import {ThemeContext} from 'components/themes'
+import {makeStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import {ReactComponent as HomeIcon } from "assets/images/house.svg";
-import {ReactComponent as SearchIcon } from "assets/images/search3.svg";
-import {ReactComponent as UserIcon } from "assets/images/user.svg";
-import {ReactComponent as AddIcon } from "assets/images/add2.svg";
+import {ReactComponent as HomeIcon} from "assets/images/house.svg";
+import {ReactComponent as SearchIcon} from "assets/images/search3.svg";
+import {ReactComponent as UserIcon} from "assets/images/user.svg";
+import {ReactComponent as AddIcon} from "assets/images/add2.svg";
 import {useHistory} from "react-router";
-import { UserContext } from "../contexts";
+import {UserContext} from "../contexts";
 
 const useStyles = makeStyles(theme => ({
-    root: {
+    navBarRoot: {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
@@ -29,7 +29,7 @@ const NavBar = () => {
     const history = useHistory();
     const { id } = useContext(UserContext);
     return (
-        <div className={classes.root}>
+        <div className={classes.navBarRoot}>
             <IconButton onClick={() => history.push("")}>
                 <HomeIcon className={classes.icon}/>
             </IconButton>
@@ -39,7 +39,7 @@ const NavBar = () => {
             <IconButton onClick={() => history.push("/upload")}>
                 <AddIcon className={classes.icon}/>
             </IconButton>
-            <IconButton onClick={() => history.push(`/profile/${id}`)}>
+            <IconButton onClick={() => history.push(`/user/${id}`)}>
                 <UserIcon className={classes.icon}/>
             </IconButton>
         </div>
