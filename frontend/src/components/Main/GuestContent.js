@@ -35,8 +35,6 @@ const GuestContent = ({ }) => {
     const { visible: alertVisible } = useContext(AlertContext);
     const [currentPage, setCurrentPage] = useState("login");
 
-    console.log("alert", alertVisible);
-
     return (
         <div className={classes.guestRoot}>
             {alertVisible && <Alert />}

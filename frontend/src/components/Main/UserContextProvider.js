@@ -57,7 +57,6 @@ const UserContextProvider = ({ children }) => {
     }
 
     const isAuthenticated = () => {
-        console.log("isAuthenticated", !!localStorage.getItem("accessToken"));
         setUserDataContext(u => ({
             ...u,
             authenticated: !!localStorage.getItem("accessToken")

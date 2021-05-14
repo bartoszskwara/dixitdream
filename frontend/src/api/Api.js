@@ -156,7 +156,6 @@ const formData = (data) => {
 
 export const apiCall = async (api, { pathParams, urlParams, postData, isFormData } = {}) => {
     const apiCall = { ...api };
-    console.log("api call");
     if(pathParams && Object.keys(pathParams).length) {
         apiCall.url = Object.keys(pathParams).reduce((url, key) => {
             return url.replaceAll(new RegExp(`{${key}}`, "g"), pathParams[key]);
@@ -179,7 +178,6 @@ export const apiCall = async (api, { pathParams, urlParams, postData, isFormData
                 "Access-Control-Allow-Origin": "*"
             }
         });
-        console.log("tu res", response);
         return response ? response.data : {};
     } catch(error) {
         return error.response && error.response.data ? {

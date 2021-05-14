@@ -11,8 +11,6 @@ const MainContent = ({ }) => {
     const { id, authenticated } = useContext(UserContext);
     const { toggleTheme } = useContext(ThemeContext);
 
-    console.log("auth", id, authenticated);
-
     return <>
         {!authenticated && <GuestContent />}
         {authenticated && <AppContent toggleTheme={toggleTheme}/>}
