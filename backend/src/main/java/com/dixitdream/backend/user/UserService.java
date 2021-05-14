@@ -6,8 +6,12 @@ import com.dixitdream.backend.dao.repository.UserRepository;
 import com.dixitdream.backend.infrastructure.exception.BadRequestException;
 import com.dixitdream.backend.infrastructure.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 @RequiredArgsConstructor
 @Service
@@ -31,28 +35,23 @@ public class UserService {
     }
 
     public UserProfile createUser(NewUserDto userDto) {
-        validateUser(userDto);
         UserProfile user = mapUser(userDto);
         return userRepository.save(user);
     }
 
     private UserProfile mapUser(NewUserDto userDto) {
         UserProfile user = new UserProfile();
-        user.setUsername(userDto.getUsername());
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setEmail(userDto.getEmail());
+        user.setUsername(trim(userDto.getUsername()));
+        user.setEmail(trim(userDto.getEmail()));
         user.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         return user;
     }
 
-    private void validateUser(NewUserDto userDto) {
-        if(isEmailInvalid(userDto.getEmail())) {
-            throw new BadRequestException("Email is incorrect.");
-        }
+    public Boolean checkIfUserExistsByEmail(String email) {
+        return isNotEmpty(email) ? userRepository.existsByEmail(email) : null;
     }
 
-    private boolean isEmailInvalid(String email) {
-        return false;
+    public Boolean checkIfUserExistsByUsername(String username) {
+        return isNotEmpty(username) ? userRepository.existsByUsername(username) : null;
     }
 }

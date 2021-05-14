@@ -23,7 +23,7 @@ public class ChallengeService {
 
     public Challenge getCurrentChallenge() {
         return challengeRepository.findTopByActiveTrue()
-                .orElseThrow(() -> new ResourceNotFoundException("There are no active challenge currently"));
+                .orElseThrow(() -> new ResourceNotFoundException("There are no active challenges currently"));
     }
 
     public Challenge createChallenge(NewChallengeDto challengeDto) {

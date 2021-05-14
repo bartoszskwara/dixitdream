@@ -25,11 +25,6 @@ public class UserProfile {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
-
-    @NotNull
-    private String firstName;
-    @NotNull
-    private String lastName;
     @NotNull
     private String username;
     @NotNull

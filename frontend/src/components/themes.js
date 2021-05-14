@@ -1,17 +1,29 @@
 import React from 'react';
 import {unstable_createMuiStrictModeTheme as createMuiTheme} from "@material-ui/core";
 import SourceSansProBold from 'assets/fonts/source-sans-pro/SourceSansPro-Bold.ttf';
+import SourceSansProBlack from 'assets/fonts/source-sans-pro/SourceSansPro-Black.ttf';
 
 const sourceSansFont = {
-  fontFamily: 'SourceSansPro-Bold',
-  fontStyle: 'normal',
-  fontDisplay: 'swap',
-  fontWeight: 400,
+    fontFamily: 'SourceSansPro-Bold',
+    fontStyle: 'normal',
+    fontDisplay: 'swap',
+    fontWeight: 400,
     marginTop: -5,
-  src: `
-    local('SourceSansPro-Bold'),
-    url(${SourceSansProBold}) format('woff')
-  `
+    src: `
+        local('SourceSansPro-Bold'),
+        url(${SourceSansProBold}) format('woff')
+    `
+};
+const sourceSansBlackFont = {
+    fontFamily: 'SourceSansPro-Black',
+    fontStyle: 'normal',
+    fontDisplay: 'swap',
+    fontWeight: 700,
+    marginTop: -5,
+    src: `
+        local('SourceSansPro-Black'),
+        url(${SourceSansProBlack}) format('woff')
+    `
 };
 
 export const themes = {
@@ -63,7 +75,11 @@ export const muiThemeProvider = ({ colors }) => {
     return createMuiTheme({
         typography: {
             fontFamily: 'SourceSansPro-Bold, Roboto Medium',
-            fontSize: 12
+            fontSize: 12,
+            subtitle1: {
+                fontFamily: 'SourceSansPro-Black, Roboto Bold',
+                fontSize: 12
+            }
         },
         palette: {
             error: {
@@ -161,6 +177,12 @@ export const muiThemeProvider = ({ colors }) => {
             MuiMenuItem: {
                 root: {
                     minWidth: 100
+                }
+            },
+            MuiInputAdornment: {
+                positionEnd: {
+                    marginLeft: 0,
+                    marginRight: 10
                 }
             }
         },

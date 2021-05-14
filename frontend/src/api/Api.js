@@ -39,6 +39,10 @@ axiosInstance.interceptors.response.use(
                 });
             }
         }
+        let accessToken = localStorage.getItem("accessToken");
+        if(!refreshToken && !accessToken) {
+            window.dispatchEvent(new Event("ACCESS_TOKEN_EVENT"));
+        }
         return Promise.reject(error);
     }
 );
@@ -74,6 +78,11 @@ export const Api = {
         method: "post",
         responseType: "json"
     },
+    signUp: {
+        url: "/user",
+        method: "post",
+        responseType: "json"
+    },
     getCurrentUser: {
         url: "/user/current",
         method: "get",
@@ -82,6 +91,11 @@ export const Api = {
     getUser: {
         url: "/user/{id}",
         method: "get",
+        responseType: "json"
+    },
+    checkIfUserExists: {
+        url: "/user/exists",
+        method: "post",
         responseType: "json"
     },
     getCurrentChallenge: {
@@ -142,6 +156,7 @@ const formData = (data) => {
 
 export const apiCall = async (api, { pathParams, urlParams, postData, isFormData } = {}) => {
     const apiCall = { ...api };
+    console.log("api call");
     if(pathParams && Object.keys(pathParams).length) {
         apiCall.url = Object.keys(pathParams).reduce((url, key) => {
             return url.replaceAll(new RegExp(`{${key}}`, "g"), pathParams[key]);
@@ -164,6 +179,7 @@ export const apiCall = async (api, { pathParams, urlParams, postData, isFormData
                 "Access-Control-Allow-Origin": "*"
             }
         });
+        console.log("tu res", response);
         return response ? response.data : {};
     } catch(error) {
         return error.response && error.response.data ? {

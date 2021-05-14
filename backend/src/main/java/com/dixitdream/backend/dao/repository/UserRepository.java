@@ -22,4 +22,7 @@ public interface UserRepository extends CrudRepository<UserProfile, Long> {
             "from UserProfile p " +
             "where p.id = :id")
     Optional<UserInfoDto> findUserById(@Param("id") Long id);
+
+    boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
 }

@@ -53,4 +53,15 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(dto);
     }
+
+    @PostMapping("/exists")
+    public ResponseEntity<UserExistsDto> checkIfUserExists(@RequestBody NewUserDto userDto) {
+        Boolean existsByUsername = userService.checkIfUserExistsByUsername(userDto.getUsername());
+        Boolean existsByEmail = userService.checkIfUserExistsByEmail(userDto.getEmail());
+        UserExistsDto dto = UserExistsDto.builder()
+                .username(existsByUsername)
+                .email(existsByEmail)
+                .build();
+        return ResponseEntity.ok(dto);
+    }
 }

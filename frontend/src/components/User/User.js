@@ -4,6 +4,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {useParams} from "react-router";
 import {Api, apiCall} from "api/Api";
 import InfiniteTiles from "components/Painting/InfiniteTiles";
+import UserSummary from "components/User/UserSummary";
 
 const useStyles = makeStyles(theme => ({
     userRoot: {

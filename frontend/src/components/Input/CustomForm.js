@@ -52,7 +52,8 @@ const CustomForm = ({ inputsData = [], buttonData }) => {
                             disableAnimation: true
                         }}
                         InputProps={{
-                            disableUnderline: true
+                            disableUnderline: true,
+                            endAdornment: input.endAdornment
                         }}
                         className={classes.field}
                     />

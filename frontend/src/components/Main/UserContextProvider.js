@@ -5,6 +5,11 @@ import {Api, apiCall} from "api/Api";
 const UserContextProvider = ({ children }) => {
     const [userDataContext, setUserDataContext] = useState({});
 
+    const setAuthError = (err) => setUserDataContext(u => ({
+        ...u,
+        authError: err
+    }));
+
     const fetchUserData = async () => {
         setUserDataContext(u => ({...u, loading: true}));
         const userDataResponse = await apiCall(Api.getCurrentUser);
@@ -51,20 +56,18 @@ const UserContextProvider = ({ children }) => {
         }
     }
 
+    const isAuthenticated = () => {
+        console.log("isAuthenticated", !!localStorage.getItem("accessToken"));
+        setUserDataContext(u => ({
+            ...u,
+            authenticated: !!localStorage.getItem("accessToken")
+        }));
+    }
+
     useEffect(() => {
-        const isAuthenticated = () => {
-            console.log(">>>>>>>tututuut", localStorage.getItem("accessToken"));
-            setUserDataContext(u => ({
-                ...u,
-                authenticated: !!localStorage.getItem("accessToken")
-            }));
-        }
-        console.log("tut add listener");
+        isAuthenticated();
         window.addEventListener("ACCESS_TOKEN_EVENT", isAuthenticated);
-        return () => {
-            console.log("tut remove listener");
-            window.removeEventListener("ACCESS_TOKEN_EVENT", isAuthenticated);
-        }
+        return () => window.removeEventListener("ACCESS_TOKEN_EVENT", isAuthenticated);
     }, [])
 
     useEffect(() => {
@@ -73,11 +76,10 @@ const UserContextProvider = ({ children }) => {
         }
     }, [userDataContext.authenticated]);
 
-    console.log(userDataContext);
-
     return <UserContext.Provider value={{
         ...userDataContext,
-        authenticate
+        authenticate,
+        setAuthError
     }}>
         {children}
     </UserContext.Provider>;

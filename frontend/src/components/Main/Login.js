@@ -4,6 +4,7 @@ import {ThemeContext} from "../themes";
 import {makeStyles} from "@material-ui/core";
 import CustomForm from "components/Input/CustomForm";
 import Card from "components/Card/Card";
+import Loader from "components/Loader/Loader";
 
 const useStyles = makeStyles({
     loginRoot: {
@@ -15,20 +16,26 @@ const useStyles = makeStyles({
 const Login = ({ }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
 
-    const { authenticate, authLoading, authError } = useContext(UserContext);
+    const { authenticate, authLoading, authError, setAuthError } = useContext(UserContext);
     const { setAlert } = useContext(AlertContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     useEffect(() => {
-        console.log("ttt1", authError);
+        setAuthError(false);
+    }, []);
+
+    useEffect(() => {
         if(authError) {
-            console.log("ttt2");
             setAlert({
                 message: "Incorrect credentials!",
                 severity: "error",
                 visible: true
-            })
+            });
+        } else {
+            setAlert({
+                visible: false
+            });
         }
     }, [authError]);
 
@@ -48,7 +55,7 @@ const Login = ({ }) => {
     const buttonData = {
         disabled: authLoading,
         onClick: () => authenticate({ email, password }),
-        label: authLoading ? "Loading..." : "Sign in"
+        label: authLoading ? <Loader /> : "Sign in"
     };
 
     return (
