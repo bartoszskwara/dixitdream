@@ -15,5 +15,8 @@ public class ChallengeDto {
     private final Long id;
     private final String name;
     private final Set<String> tags;
+    private final boolean active;
     private final Long endDate;
+    private final Integer numberOfPaintings;
+    private final Long numberOfUsers;
 }

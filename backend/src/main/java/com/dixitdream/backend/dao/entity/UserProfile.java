@@ -50,4 +50,7 @@ public class UserProfile {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "visits", cascade = CascadeType.PERSIST)
     private Set<Painting> visitedPaintings = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<Notification> notifications = new HashSet<>();
 }

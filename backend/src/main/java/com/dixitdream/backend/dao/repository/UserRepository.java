@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,4 +26,7 @@ public interface UserRepository extends CrudRepository<UserProfile, Long> {
 
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
+
+    @Query("select u from UserProfile u where u.id in :ids")
+    List<UserProfile> findAllByIds(@Param("ids") List<Long> ids);
 }

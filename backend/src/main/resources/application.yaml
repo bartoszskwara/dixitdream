@@ -28,12 +28,12 @@ settings:
 
 aws:
   s3Url: s3.eu-central-1.amazonaws.com
-  accessKey: AKIAZHJC4VWHZKAE4ZJT
-  secretKey: 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
-  bucketName: barytonn-paintings
+  accessKey: accesskey
+  secretKey: secret
+  bucketName: bucketname
 
 security:
   issuer: dixitdreamapp
-  access-token-expiration-time: 10000
-  refresh-token-expiration-time: 60000
-  secret-key: dixitdreamsecretkey285479234
+  access-token-expiration-time: 900000
+  refresh-token-expiration-time: 604800000
+  secret-key: secretkey

@@ -7,9 +7,11 @@ import com.dixitdream.backend.dao.projection.PaintingProjectionDto;
 import com.dixitdream.backend.dao.projection.UserInfoDto;
 import com.dixitdream.backend.dao.repository.ChallengeRepository;
 import com.dixitdream.backend.dao.repository.PaintingRepository;
+import com.dixitdream.backend.events.PaintingLikeEventPublisher;
 import com.dixitdream.backend.infrastructure.exception.BadRequestException;
 import com.dixitdream.backend.infrastructure.exception.ResourceNotFoundException;
 import com.dixitdream.backend.infrastructure.exception.ServerErrorException;
+import com.dixitdream.backend.notification.NotificationService;
 import com.dixitdream.backend.user.UserService;
 import com.dixitdream.backend.tags.TagMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +39,7 @@ public class PaintingService extends AmazonS3Service {
     private final UserService userService;
     private final PaintingRepository paintingRepository;
     private final ChallengeRepository challengeRepository;
+    private final PaintingLikeEventPublisher paintingLikeEventPublisher;
 
     public Painting getPainting(Long paintingId) {
         return paintingRepository.findByIdWithDetails(paintingId).orElseThrow(() -> new ResourceNotFoundException("Painting not found"));
@@ -59,7 +62,7 @@ public class PaintingService extends AmazonS3Service {
         painting.setUser(userService.getCurrentUser());
         painting.setFilePath(filePath);
         painting.setChallenge(challenge);
-        painting.setCreationDate(new Timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000));
+        painting.setCreationDate(new Timestamp(LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond() * 1000));
         return paintingRepository.save(painting);
     }
 
@@ -69,7 +72,7 @@ public class PaintingService extends AmazonS3Service {
         painting.setDescription(description);
         painting.removeTags(painting.getTags());
         painting.addTags(tagMapper.mapTags(tags));
-        painting.setUpdateDate(new Timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000));
+        painting.setUpdateDate(new Timestamp(LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond() * 1000));
         return paintingRepository.save(painting);
     }
 
@@ -86,8 +89,10 @@ public class PaintingService extends AmazonS3Service {
         UserProfile currentUser = userService.getCurrentUser();
         if(!painting.getLikes().contains(currentUser)) {
             painting.addLike(currentUser);
+            paintingLikeEventPublisher.publishLikeEvent(currentUser, painting);
         } else {
             painting.removeLike(currentUser);
+            paintingLikeEventPublisher.publishDislikeEvent(currentUser, painting);
         }
         paintingRepository.save(painting);
     }
