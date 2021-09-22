@@ -1,18 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
-import PaintingTile from "./PaintingTile";
-import Loader from "components/Loader/Loader";
-import InfiniteScroll from "react-infinite-scroll-component";
+import PaintingTile from "components/Painting/PaintingTile";
 import {useHistory} from "react-router";
-import cn from "classnames";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {PaintingContext} from "../contexts";
+import InfiniteTiles from "./InfiniteTiles";
 
 const useStyles = makeStyles(theme => ({
-    root: {
-        flex: 1
-    },
     tiles: {
         display: "flex",
         flexDirection: "row",
@@ -69,45 +64,15 @@ const TileWithContext = ({ painting, setImagesLoadedCount, withoutDetails }) => 
     </PaintingContext.Provider>
 };
 
-const InfiniteTiles = ({ className, items, error, hasMore, scrollTarget, filter, filterRequired, fetchPaintings, loading, withoutDetails }) => {
+const PaintingInfiniteTiles = ({ ...InfiniteTilesProps }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
+
     const [imagesLoadedCount, setImagesLoadedCount] = useState(0);
-    const [page, setPage] = useState(0);
-    const [fetchingCount, setFetchingCount] = useState(0);
     const isBigScreen = useMediaQuery("(min-width:800px) and (max-width:1500px)");
     const isLargeScreen = useMediaQuery("(min-width:1500px)");
     const placeholderClass = isBigScreen ? classes.placeholderBig : (isLargeScreen ? classes.placeholderLarge : classes.placeholderDefault);
 
-    useEffect(() => {
-        const pageContent = document.getElementById("page-content");
-        const tilesContent = document.getElementById("tiles-infinite-scroll");
-        if (imagesLoadedCount > 0 && hasMore && tilesContent.clientHeight <= pageContent.clientHeight) {
-            fetchNext();
-        }
-    }, [items, imagesLoadedCount, hasMore]);
-
-    useEffect(() => {
-        if(filter) {
-            fetchPaintings({ ...filter });
-        }
-    }, [filter]);
-
-    useEffect(() => {
-        if(loading || (filterRequired && !filter)) {
-            return;
-        }
-
-        let lastFetchedPaintingId = undefined;
-        if (page > 0 && items.length) {
-            lastFetchedPaintingId = items[items.length - 1].id;
-        }
-
-        if (lastFetchedPaintingId && items.length) {
-            fetchPaintings({ ...(filter ? filter : {}), next: true, lastPaintingId: lastFetchedPaintingId });
-        } else {
-            fetchPaintings({ ...(filter ? filter : {}) });
-        }
-    }, [fetchingCount]);
+    const {items, withoutDetails} = InfiniteTilesProps;
 
     const tiles = [...items.map(p => (<li key={p.id}>
         <TileWithContext
@@ -117,33 +82,12 @@ const InfiniteTiles = ({ className, items, error, hasMore, scrollTarget, filter,
         />
     </li>)), ...getPlaceholders(placeholderClass)];
 
-    const fetchNext = () => {
-        setPage(p => (p + 1));
-        setFetchingCount(i => (i + 1));
-    }
-
-    const refresh = () => {
-        setPage(0);
-        setFetchingCount(i => (i + 1));
-    }
-
-    return <div id="tiles-infinite-scroll" className={cn(classes.root, className)} >
-        {error && <div className={classes.error}>{error}</div>}
-        {!error && <InfiniteScroll
-            dataLength={tiles.length}
-            next={fetchNext}
-            hasMore={hasMore}
-            loader={<Loader />}
-            pullDownToRefresh
-            refreshFunction={refresh}
-            pullDownToRefreshThreshold={50}
-            pullDownToRefreshContent={<Loader />}
-            releaseToRefreshContent={<Loader />}
-            scrollableTarget={scrollTarget}
-        >
-            <ul className={classes.tiles}>{tiles}</ul>
-        </InfiniteScroll>}
-    </div>;
+    return <InfiniteTiles
+        {...InfiniteTilesProps}
+        imagesLoadedCount={imagesLoadedCount}
+        tiles={tiles}
+        tilesContainerClass={classes.tiles}
+    />
 };
 
-export default InfiniteTiles;
+export default PaintingInfiniteTiles;

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import Dashboard from "components/Dashboard/Dashboard";
 import {ThemeContext} from "components/themes";
-import {AlertContext, DialogContext, GlobalLoadingContext, SettingsContext} from "components/contexts";
+import {AlertContext, DialogContext, GlobalLoadingContext, SettingsContext, NotificationsContext} from "components/contexts";
 import {makeStyles} from "@material-ui/core"
 import cn from 'classnames';
 import {Redirect, Route, Switch} from "react-router";
@@ -16,6 +16,8 @@ import Alert from "components/Alert/Alert";
 import Loader from "components/Loader/Loader";
 import UploadContextProvider from "./UploadContextProvider";
 import Dialog from "components/Dialog/Dialog";
+import Notifications from "components/Notifications/Notifications";
+import Settings from "components/Settings/Settings";
 
 const useStyles = makeStyles({
     mainRoot: {
@@ -64,6 +66,7 @@ const AppInnerContent = () => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const alert = useContext(AlertContext);
     const dialog = useContext(DialogContext);
+    const notifications = useContext(NotificationsContext);
     const { globalLoading } = useContext(GlobalLoadingContext);
     return (
         <div className={classes.mainRoot}>
@@ -74,12 +77,14 @@ const AppInnerContent = () => {
                 {globalLoading && <div className={classes.globalLoading}><Loader /></div>}
                 {dialog.open && <Dialog />}
                 {alert.visible && <Alert />}
+                {notifications.visible && <Notifications />}
                 <Switch>
                     <Route path="/" exact component={Dashboard} />
                     <Route path="/upload" exact component={UploadForm} />
                     <Route path="/explore" exact component={Explore} />
                     <Route path="/painting/:paintingId" exact component={Painting} />
                     <Route path="/user/:userId" exact component={User} />
+                    <Route path="/settings" exact component={Settings} />
                     <Redirect from="/home" to="/" />
                     <Redirect to="/" />
                 </Switch>

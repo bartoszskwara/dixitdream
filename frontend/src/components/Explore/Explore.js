@@ -2,20 +2,25 @@ import React, {useContext, useState} from "react";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import SearchIcon from '@material-ui/icons/Search';
-import InfiniteTiles from "components/Painting/InfiniteTiles";
+import { ItemsInfiniteList, PaintingInfiniteTiles, ChallengeInfiniteTiles } from "components/InfiniteTiles";
 import TagsInput from "components/Tags/TagsInput";
 import useDebounce from "hooks/useDebounce";
-import {Api, apiCall} from "api/Api";
+import {Api} from "api/Api";
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import TrackChangesIcon from '@material-ui/icons/TrackChanges';
+import ImageIcon from '@material-ui/icons/Image';
 
 const useStyles = makeStyles(theme => ({
     explore: {
         flex: 1,
         padding: 10,
         overflow: "auto"
+    },
+    tabs: {
+        marginBottom: 10
     }
 }));
-
-const LIMIT = 4;
 
 const Explore = ({}) => {
     const classes = useStyles(useContext(ThemeContext).theme);
@@ -23,10 +28,7 @@ const Explore = ({}) => {
         query: "",
         tags: []
     });
-    const [shouldFetchMore, setShouldFetchMore] = useState(true);
-    const [error, setError] = useState(null);
-    const [paintings, setPaintings] = useState([]);
-    const [paintingsLoading, setPaintingsLoading] = useState(false);
+    const [currentTab, setCurrentTab] = useState("paintings");
     const searchFilterDebounced = useDebounce(searchFilter, 300);
 
     const onTagAdded = (tag) => {
@@ -41,25 +43,6 @@ const Explore = ({}) => {
         tags: filter.tags.filter(i => i.label !== tag)
     }));
 
-    const fetchPaintings = async ({ query, tags, next = false, lastPaintingId }) => {
-        setPaintingsLoading(true);
-        const data = await apiCall(Api.getPaintings, {
-            postData: {
-                ...(query ? { query } : {} ),
-                ...(tags && tags.length ? { tags: tags.map(t => t.label) } : {}),
-                limit: LIMIT,
-                ...(next && lastPaintingId ? { lastPaintingId } : {} )
-            }
-        });
-        if (!data.error) {
-            setPaintings(next ? items => ([...items, ...data.content]) : data.content);
-            setShouldFetchMore(data.content.length === LIMIT);
-        } else {
-            setError(data.error);
-        }
-        setPaintingsLoading(false);
-    };
-
     return <div id="explore-root" className={classes.explore}>
         <TagsInput
             tags={searchFilter.tags}
@@ -69,15 +52,35 @@ const Explore = ({}) => {
             onInputChange={(event) => setSearchFilter(filter => ({ ...filter, query: event.target.value }))}
             inputAdornmentIcon={<SearchIcon />}
         />
-        <InfiniteTiles
-            items={paintings}
-            hasMore={shouldFetchMore && !error}
-            error={error}
+        <Tabs
+            className={classes.tabs}
+            value={currentTab}
+            onChange={(event, tab) => setCurrentTab(tab)}
+            variant="fullWidth"
+            indicatorColor="primary"
+            textColor="primary"
+            aria-label="tabs"
+        >
+            <Tab value="paintings" icon={<ImageIcon />} />
+            <Tab value="challenges" icon={<TrackChangesIcon />} />
+        </Tabs>
+        {currentTab === "paintings" && <ItemsInfiniteList
+            component={<PaintingInfiniteTiles />}
+            searchFilter={searchFilterDebounced}
+            apiData={Api.getPaintings}
+            requestParamName="postData"
+            lastIdFieldName="lastPaintingId"
             scrollTarget="explore-root"
-            filter={searchFilterDebounced}
-            fetchPaintings={fetchPaintings}
-            loading={paintingsLoading}
-        />
+        />}
+        {currentTab === "challenges" && <ItemsInfiniteList
+            component={<ChallengeInfiniteTiles />}
+            searchFilter={searchFilterDebounced}
+            apiData={Api.getChallenges}
+            requestParamName="urlParams"
+            lastIdFieldName="lastChallengeId"
+            scrollTarget="explore-root"
+        />}
+
     </div>;
 };
 

@@ -4,7 +4,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import Dropzone from "./Dropzone";
 import Loader from "components/Loader/Loader";
 import Countdown from "./Countdown";
-import ChallengeTags from "./ChallengeTags";
+import ChallengeTags from "components/Challenge/ChallengeTags";
 import {useHistory} from "react-router";
 import {UploadContext} from "components/contexts";
 
@@ -37,9 +37,8 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const ChallengeUpload = ({ loading, error, challenge }) => {
+const ChallengeUpload = ({ loading, error, challenge, challengeEnded, setChallengeEnded, refreshChallenge }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
-    const [challengeEnded, setChallengeEnded] = useState(false);
     const [uploadError, setUploadError] = useState(null);
     const { setChallengeData } = useContext(UploadContext);
     const history = useHistory();
@@ -72,11 +71,12 @@ const ChallengeUpload = ({ loading, error, challenge }) => {
                     validateFile={validateUpload}
                 >
                     {challenge && <>
-                        <ChallengeTags classes={classes} tags={challenge.tags} />
+                        <ChallengeTags tags={challenge.tags} />
                         {challenge.name && <div className={classes.challengeName}>{challenge.name.toUpperCase()}</div>}
                         {!challengeEnded && <Countdown
                             endDate={challenge.endDate}
                             setChallengeEnded={setChallengeEnded}
+                            refreshChallenge={refreshChallenge}
                         />}
                         {challengeEnded && <div>Challenge ended</div>}
                     </>}

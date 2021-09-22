@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react'
 import {muiThemeProvider, ThemeContext, themes} from "components/themes";
-import {AlertContext, DialogContext, GlobalLoadingContext, UserContext} from "components/contexts";
+import {AlertContext, DialogContext, GlobalLoadingContext, UserContext, NotificationsContext} from "components/contexts";
 import {ThemeProvider} from "@material-ui/core"
 import CssBaseline from "@material-ui/core/CssBaseline";
 import UserContextProvider from "./UserContextProvider";
@@ -27,6 +27,9 @@ const MainWrapper = () => {
     const [dialog, setDialog] = useState({
         open: false
     });
+    const [notificationsContext, setNotificationsContext] = useState({
+        visible: false
+    });
 
     const toggleTheme = () => {
         setTheme(theme => {
@@ -44,7 +47,9 @@ const MainWrapper = () => {
                     <GlobalLoadingContext.Provider value={{ globalLoading, setGlobalLoading }} >
                         <AlertContext.Provider value={{ ...alert, setAlert }} >
                             <DialogContext.Provider value={{ ...dialog, setDialog }} >
-                                <MainContent />
+                                <NotificationsContext.Provider value={{ ...notificationsContext, setNotificationsContext }} >
+                                    <MainContent />
+                                </NotificationsContext.Provider>
                             </DialogContext.Provider>
                         </AlertContext.Provider>
                     </GlobalLoadingContext.Provider>

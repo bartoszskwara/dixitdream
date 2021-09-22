@@ -43,7 +43,7 @@ const formatCountdown = (time) => {
     return countdown;
 }
 
-const Countdown = ({ endDate, setChallengeEnded }) => {
+const Countdown = ({ endDate, setChallengeEnded, refreshChallenge }) => {
     const classes = useStyles(useContext(ThemeContext).theme);
     const [timeRemaining, setTimeRemaining] = useState("");
 
@@ -57,6 +57,7 @@ const Countdown = ({ endDate, setChallengeEnded }) => {
             if (callback) {
                 callback();
             }
+            refreshChallenge();
         }
     }, [endDate, setChallengeEnded]);
 

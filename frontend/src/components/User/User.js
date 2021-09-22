@@ -3,8 +3,8 @@ import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import {useParams} from "react-router";
 import {Api, apiCall} from "api/Api";
-import InfiniteTiles from "components/Painting/InfiniteTiles";
 import UserSummary from "components/User/UserSummary";
+import PaintingInfiniteTiles from "components/InfiniteTiles/PaintingInfiniteTiles";
 
 const useStyles = makeStyles(theme => ({
     userRoot: {
@@ -33,13 +33,13 @@ const User = () => {
         }
     }, [userId]);
 
-    const fetchUserPaintings = async ({ userId, next, lastPaintingId }) => {
+    const fetchUserPaintings = async ({ userId, next, lastId }) => {
         setPaintingsLoading(true);
         const data = await apiCall(Api.getPaintings, {
             postData: {
                 userId,
                 limit: LIMIT,
-                ...(next && lastPaintingId ? { lastPaintingId } : {} )
+                ...(next && lastId ? { lastPaintingId: lastId } : {} )
             }
         });
         if (!data.error) {
@@ -57,11 +57,12 @@ const User = () => {
                 id={userId}
                 detailed
                 color="secondary"
+                showSettings
             />
-            {userId && <InfiniteTiles
+            {userId && <PaintingInfiniteTiles
                 className={classes.tiles}
                 items={paintings}
-                fetchPaintings={fetchUserPaintings}
+                fetchItems={fetchUserPaintings}
                 filter={filter}
                 filterRequired
                 hasMore={shouldFetchMore && !paintingsLoadingError}

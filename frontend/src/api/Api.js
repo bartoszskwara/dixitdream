@@ -99,7 +99,7 @@ export const Api = {
         responseType: "json"
     },
     getCurrentChallenge: {
-        url: "/challenge",
+        url: "/challenge/current",
         method: "get",
         responseType: "json"
     },
@@ -123,6 +123,11 @@ export const Api = {
         method: "post",
         responseType: "json"
     },
+    getChallenges: {
+        url: "/challenge",
+        method: "get",
+        responseType: "json"
+    },
     getTags: {
         url: "/tag",
         method: "get",
@@ -143,7 +148,16 @@ export const Api = {
     markPaintingAsVisited: {
         url: "/painting/{id}/visit",
         method: "put"
+    },
+    getNotifications: {
+        url: "/notification",
+        method: "get"
+    },
+    openNotification: {
+        url: "/notification/{notificationId}",
+        method: "put"
     }
+
 };
 
 const formData = (data) => {
@@ -184,7 +198,7 @@ export const apiCall = async (api, { pathParams, urlParams, postData, isFormData
             ...error.response.data,
             status: error.response.status
         } : {
-            status: error.response.status,
+            status: error.response ? error.response.status : null,
             error: "Unexpected error."
         };
     }

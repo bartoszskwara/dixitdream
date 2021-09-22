@@ -184,6 +184,19 @@ export const muiThemeProvider = ({ colors }) => {
                     marginLeft: 0,
                     marginRight: 10
                 }
+            },
+            MuiTabs: {
+                indicator: {
+                    backgroundColor: colors.primary500
+                }
+            },
+            MuiTab: {
+                textColorPrimary: {
+                    color: colors.primary100,
+                    "&$selected": {
+                        color: colors.primary500
+                    }
+                }
             }
         },
     });

@@ -17,7 +17,8 @@ const useStyles = makeStyles(theme => ({
     info: {
         display: "flex",
         flexDirection: "column",
-        alignItems: "center"
+        alignItems: "center",
+        width: "100%"
     },
     dropArea: {
         flex: 1,
@@ -104,17 +105,19 @@ const Dropzone = ({ children, disabled = false, error = false, onFilesUpload = (
                 <input {...getInputProps()} />
                 <div className={classes.info}>
                     {children}
-                    <CloudUploadIcon className={classes.uploadIcon}/>
-                    <div  className={classes.uploadInfoDragText}>
-                        Choose a file or drag it here
-                    </div>
-                    {loading && <Loader />}
-                    {(!loading && uploadInfo) && <UploadInfo
-                        classes={classes}
-                        extensions={uploadInfo.extensions}
-                        ratio={uploadInfo.ratio}
-                        maxSize={uploadInfo.maxSize}
-                    />}
+                    {!disabled && <>
+                        <CloudUploadIcon className={classes.uploadIcon}/>
+                        <div  className={classes.uploadInfoDragText}>
+                            Choose a file or drag it here
+                        </div>
+                        {loading && <Loader />}
+                        {(!loading && uploadInfo) && <UploadInfo
+                            classes={classes}
+                            extensions={uploadInfo.extensions}
+                            ratio={uploadInfo.ratio}
+                            maxSize={uploadInfo.maxSize}
+                        />}
+                    </>}
                 </div>
             </div>
             {error && <div className={classes.errorText}>{error}</div>}

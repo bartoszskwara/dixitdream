@@ -28,7 +28,7 @@ const UserContextProvider = ({ children }) => {
                 error: true
             }));
         }
-    }
+    };
 
     const authenticate = async ({ email, password }) => {
         setUserDataContext(u => ({
@@ -54,20 +54,29 @@ const UserContextProvider = ({ children }) => {
                 authenticated: false
             }));
         }
-    }
+    };
 
     const isAuthenticated = () => {
         setUserDataContext(u => ({
             ...u,
             authenticated: !!localStorage.getItem("accessToken")
         }));
-    }
+    };
+
+    const logout = () => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        setUserDataContext({
+            authLoading: false,
+            authenticated: false
+        });
+    };
 
     useEffect(() => {
         isAuthenticated();
         window.addEventListener("ACCESS_TOKEN_EVENT", isAuthenticated);
         return () => window.removeEventListener("ACCESS_TOKEN_EVENT", isAuthenticated);
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (userDataContext.authenticated) {
@@ -78,7 +87,8 @@ const UserContextProvider = ({ children }) => {
     return <UserContext.Provider value={{
         ...userDataContext,
         authenticate,
-        setAuthError
+        setAuthError,
+        logout
     }}>
         {children}
     </UserContext.Provider>;

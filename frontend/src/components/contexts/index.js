@@ -2,6 +2,10 @@ import React from 'react';
 
 export const AlertContext = React.createContext({});
 export const DialogContext = React.createContext({});
+export const NotificationsContext = React.createContext({
+    visible: false,
+    setNotificationsContext: () => {}
+});
 export const GlobalLoadingContext = React.createContext({
     globalLoading: false,
     setGlobalLoading: () => {}

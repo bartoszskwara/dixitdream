@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
     },
     highlightedText: {
         color: props => props.colors.primary700,
+        cursor: "pointer"
     }
 }));
 

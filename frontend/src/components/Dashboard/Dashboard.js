@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useMemo, useState} from 'react'
 import {ThemeContext} from 'components/themes'
 import {makeStyles} from '@material-ui/core/styles';
 import ChallengeUpload from "./ChallengeUpload/ChallengeUpload";
-import InfiniteTiles from "components/Painting/InfiniteTiles";
+import PaintingInfiniteTiles from "components/InfiniteTiles/PaintingInfiniteTiles";
 import {Api, apiCall} from "api/Api";
 import {useHistory} from "react-router";
 import {UserContext} from "components/contexts";
@@ -29,6 +29,7 @@ const Dashboard = () => {
     const [paintingsLoading, setPaintingsLoading] = useState(false);
     const [paintingsLoadingError, setPaintingsLoadingError] = useState(false);
     const [shouldFetchMore, setShouldFetchMore] = useState(true);
+    const [challengeEnded, setChallengeEnded] = useState(false);
     const history = useHistory();
     const { id: userId } = useContext(UserContext);
 
@@ -36,13 +37,13 @@ const Dashboard = () => {
         fetchChallengeData();
     }, []);
 
-    const fetchChallengePaintings = async ({ challengeId, next, lastPaintingId}) => {
+    const fetchChallengePaintings = async ({ challengeId, next, lastId }) => {
         setPaintingsLoading(true);
         const data = await apiCall(Api.getPaintings, {
             postData: {
                 challengeId,
                 limit: LIMIT,
-                ...(next && lastPaintingId ? { lastPaintingId } : {} )
+                ...(next && lastId ? { lastPaintingId: lastId } : {} )
             }
         });
         if (!data.error && data.content) {
@@ -60,6 +61,7 @@ const Dashboard = () => {
         if(!data.error) {
             setChallenge(data);
             setChallengeLoading(false);
+            setChallengeEnded(false);
         } else {
             setChallengeLoading(false);
             setChallengeLoadingError(data.error);
@@ -75,14 +77,17 @@ const Dashboard = () => {
             />
             <ChallengeUpload
                 challenge={challenge}
+                challengeEnded={challengeEnded}
+                setChallengeEnded={setChallengeEnded}
+                refreshChallenge={fetchChallengeData}
                 loading={challengeLoading}
                 error={challengeLoadingError}
             />
-            {challenge &&
-                <InfiniteTiles
+            {(challenge && !challengeLoading) &&
+                <PaintingInfiniteTiles
                     className={classes.tiles}
                     items={paintings}
-                    fetchPaintings={fetchChallengePaintings}
+                    fetchItems={fetchChallengePaintings}
                     filter={filter}
                     filterRequired={true}
                     hasMore={shouldFetchMore && !paintingsLoadingError}
