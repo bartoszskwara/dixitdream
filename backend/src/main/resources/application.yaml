@@ -27,10 +27,11 @@ settings:
     ratio: '7:11'
 
 aws:
-  s3Url: s3.eu-central-1.amazonaws.com
+  s3Url: s3url
   accessKey: accesskey
   secretKey: secret
   bucketName: bucketname
+  region: awsregion
 
 security:
   issuer: dixitdreamapp
