@@ -8,7 +8,7 @@ import Loader from "components/Loader/Loader";
 import NotFound from "components/NotFound/NotFound";
 import Tags from "components/Tags/Tags";
 import Card from "components/Card/Card";
-import {PaintingContext} from "../contexts";
+import {AlertContext, PaintingContext} from "../contexts";
 import PaintingDetailsEditor from "./PaintingDetailsEditor";
 
 const useStyles = makeStyles(theme => ({
@@ -85,6 +85,7 @@ const Painting = () => {
     const [editError, setEditError] = useState({
         file: false
     });
+    const { setAlert } = useContext(AlertContext);
 
     const fetchPainting = async (paintingId) => {
         setLoading(true);
@@ -130,6 +131,23 @@ const Painting = () => {
         }
     }
 
+    const toggleLike = async () => {
+        const data = await apiCall(Api.toggleLikePainting, { pathParams: { id: painting.id } });
+        if(!data.error) {
+            setPainting(painting => ({
+                ...painting,
+                likes: painting.liked ? painting.likes - 1 : painting.likes + 1,
+                liked: !painting.liked
+            }));
+        } else {
+            setAlert({
+                message: "Sorry, we couldn't save your like. Please try again later.",
+                severity: "error",
+                visible: true
+            })
+        }
+    }
+
     useEffect(() => {
         if(paintingId) {
             fetchPainting(paintingId);
@@ -141,7 +159,8 @@ const Painting = () => {
     return (
         <PaintingContext.Provider value={{
             paintingContext: painting,
-            setPaintingContext: setPainting
+            setPaintingContext: setPainting,
+            toggleLike
         }} >
             <div className={classes.paintingRoot}>
                 {loading && <Loader />}

@@ -42,25 +42,7 @@ const useStyles = makeStyles(theme => ({
 
 const PaintingTileBottomPanel = ({}) => {
     const classes = useStyles(useContext(ThemeContext).theme);
-    const { setAlert } = useContext(AlertContext);
-    const { paintingContext: { id, likes, visits, liked }, setPaintingContext } = useContext(PaintingContext);
-
-    const toggleLike = async () => {
-        const data = await apiCall(Api.toggleLikePainting, { pathParams: { id } });
-        if(!data.error) {
-            setPaintingContext(context => ({
-                ...context,
-                likes: context.liked ? context.likes - 1 : context.likes + 1,
-                liked: !context.liked
-            }));
-        } else {
-            setAlert({
-                message: "Sorry, we couldn't save your like. Please try again later.",
-                severity: "error",
-                visible: true
-            })
-        }
-    }
+    const { paintingContext: { likes, visits, liked }, toggleLike } = useContext(PaintingContext);
 
     return (
         <div className={classes.info}>

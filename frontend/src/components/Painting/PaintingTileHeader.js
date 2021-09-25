@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
+import PropTypes from "prop-types";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
@@ -155,7 +156,7 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
                     [classes.avatarInsideContainer]: avatarVariant === "inside",
                     [classes.avatarOutsideContainer]: avatarVariant === "outside"
                 })}
-                onClick={(author && author.id) ? () => history.push(`/profile/${author.id}`) : () => {}}
+                onClick={(author && author.id) ? () => history.push(`/user/${author.id}`) : () => {}}
             >
                 <Avatar
                     alt="painting"
@@ -191,4 +192,13 @@ const PaintingTileHeader = ({ paintingId, author, avatar, avatarVariant, showOpt
     );
 };
 
+PaintingTileHeader.propTypes = {
+    paintingId: PropTypes.number,
+    author: PropTypes.object,
+    avatar: PropTypes.string,
+    avatarVariant: PropTypes.oneOf(["inside", "outside"]),
+    showOptions: PropTypes.bool,
+    editable: PropTypes.bool,
+    setEditMode: PropTypes.func
+}
 export default PaintingTileHeader;

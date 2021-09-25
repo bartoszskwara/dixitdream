@@ -1,4 +1,5 @@
 import React, {useContext, useState} from "react";
+import PropTypes, {oneOf, string} from "prop-types";
 import {ThemeContext} from "components/themes";
 import {makeStyles} from "@material-ui/core/styles";
 import cn from "classnames";
@@ -7,6 +8,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import PaintingTileBottomPanel from "./PaintingTileBottomPanel";
 import PaintingTileHeader from "./PaintingTileHeader";
 import {PaintingContext} from "../contexts";
+import { useDoubleTap } from 'use-double-tap';
 
 const useStyles = makeStyles(theme => ({
     paintingTileContainer: {
@@ -89,7 +91,11 @@ const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = (
     const isBigScreen = useMediaQuery("(min-width:800px) and (max-width:1500px)");
     const isLargeScreen = useMediaQuery("(min-width:1500px)");
     const [loading, setLoading] = useState(true);
-    const { paintingContext: { id, url: src, avatar, user: author } } = useContext(PaintingContext);
+    const { paintingContext: { id, url: src, avatar, user: author }, toggleLike } = useContext(PaintingContext);
+
+    const clickImageProps = useDoubleTap(!onClick ? (event) => {
+        toggleLike();
+    } : null);
 
     return (
         <div className={cn(classes.paintingTileContainer, className)}>
@@ -126,6 +132,7 @@ const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = (
                             onLoad();
                         }}
                         onClick={onClick || (() => {})}
+                        {...clickImageProps}
                     />
                     {!withoutDetails && <PaintingTileBottomPanel />}
                 </div>
@@ -134,4 +141,14 @@ const PaintingTile = ({ className, avatarVariant = "inside", onClick, onLoad = (
     );
 };
 
+PaintingTile.propTypes = {
+    className: PropTypes.string,
+    avatarVariant: PropTypes.oneOf(["inside", "outside"]),
+    onClick: PropTypes.func,
+    onLoad: PropTypes.func,
+    showOptions: PropTypes.bool,
+    editable: PropTypes.bool,
+    setEditMode: PropTypes.func,
+    withoutDetails: PropTypes.bool
+}
 export default PaintingTile;
