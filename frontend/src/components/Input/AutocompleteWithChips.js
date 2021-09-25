@@ -105,6 +105,10 @@ renderOption, setInputRef }) => {
                                 disabled={disabled}
                                 onChange={onInputChange}
                                 onFocus={() => setOpen(true)}
+                                inputProps={{
+                                    ...params.inputProps,
+                                    inputMode: "search"
+                                }}
                                 InputProps={{
                                     ...params.InputProps,
                                     disableUnderline: true,
