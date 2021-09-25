@@ -29,12 +29,14 @@ public abstract class AmazonS3Service {
     private String accessKey;
     @Value("${aws.secretKey}")
     private String secretKey;
+    @Value("${aws.region}")
+    private String awsRegion;
 
     @PostConstruct
     private void initializeAmazon() {
         BasicAWSCredentials awsCreds = new BasicAWSCredentials(this.accessKey, this.secretKey);
         this.s3client = AmazonS3ClientBuilder.standard()
-                .withRegion(Regions.EU_CENTRAL_1)
+                .withRegion(Regions.fromName(awsRegion))
                 .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
                 .build();
     }
