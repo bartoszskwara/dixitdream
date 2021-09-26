@@ -7,6 +7,8 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,4 +41,11 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private UserProfile user;
+
+    @Enumerated(EnumType.STRING)
+    private NotificationStatus status;
+
+    public enum NotificationStatus {
+        created, open, archived
+    }
 }

@@ -16,6 +16,8 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.dixitdream.backend.dao.entity.Notification.NotificationStatus.created;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/notification")
@@ -35,7 +37,7 @@ public class NotificationController {
                         .contextId(n.getNotificationData().getContextId())
                         .avatarUrl(notificationService.getAvatarForNotification(n))
                         .datetime(n.getDatetime().atZone(ZoneId.systemDefault()).toEpochSecond())
-                        .isNew(!n.isOpened())
+                        .isNew(created.equals(n.getStatus()))
                         .build())
                 .collect(Collectors.toList());
         return ResponseEntity.ok(new ListContentDto<>(dtos));

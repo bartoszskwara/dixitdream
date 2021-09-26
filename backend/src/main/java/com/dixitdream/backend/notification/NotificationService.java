@@ -42,6 +42,7 @@ public class NotificationService {
         notification.setUser(painting.getUser());
         notification.setDatetime(LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
         notification.setNotificationData(new NotificationData(painting.getId(), List.of(liker.getId())));
+        notification.setStatus(Notification.NotificationStatus.created);
         notificationRepository.save(notification);
     }
 
@@ -59,7 +60,7 @@ public class NotificationService {
         if(!notification.getUser().getId().equals(currentUser.getId())) {
             throw new ForbiddenException("Access to notification denied.");
         }
-        notification.setOpened(true);
+        notification.setStatus(Notification.NotificationStatus.open);
         notificationRepository.save(notification);
     }
 
