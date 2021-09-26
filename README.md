@@ -7,6 +7,8 @@ Application designed in Mobile First approach to share digital painting art in t
 
 ### App: https://dixitdream.herokuapp.com/
 
+### If you don't want to sign up, you can use guest login: guest@dixitdream.com | Guest123$
+
 ### Frontend: 
 * React 17
 * Material UI
