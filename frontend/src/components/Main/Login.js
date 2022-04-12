@@ -65,6 +65,14 @@ const Login = ({ }) => {
                     inputsData={inputsData}
                     buttonData={buttonData}
                 />
+                <div onClick={() => { 
+                    console.log('click event');
+                    gtag('event', 'test_event', {
+                      event_category: 'test_event_category',
+                      event_label: 'test_event_label',
+                      value: 999
+                    });
+                }}>Test event</div>
             </Card>
         </div>
     );
