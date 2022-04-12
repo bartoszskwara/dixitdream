@@ -67,10 +67,9 @@ const Login = ({ }) => {
                 />
                 <div onClick={() => { 
                     console.log('click event');
-                    window.gtag('event', 'test_event', {
-                      event_category: 'test_event_category',
-                      event_label: 'test_event_label',
-                      value: 999
+                    window.gtag({
+                        event: 'login',
+                        loginMethod: 'login-method-email'
                     });
                 }}>Test event</div>
             </Card>
