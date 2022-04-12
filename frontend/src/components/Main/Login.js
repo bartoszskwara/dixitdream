@@ -67,7 +67,7 @@ const Login = ({ }) => {
                 />
                 <div onClick={() => { 
                     console.log('click event');
-                    gtag('event', 'test_event', {
+                    window.gtag('event', 'test_event', {
                       event_category: 'test_event_category',
                       event_label: 'test_event_label',
                       value: 999
