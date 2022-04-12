@@ -67,9 +67,15 @@ const Login = ({ }) => {
                 />
                 <div onClick={() => { 
                     console.log('click event');
-                    window.gtag({
-                        event: 'login',
-                        loginMethod: 'login-method-email'
+                    window.gtag("event", "view_item", {
+                      currency: "USD",
+                      value: 7.77,
+                      items: [
+                        {
+                          item_id: "SKU_12345",
+                          item_name: "Stan and Friends Tee"
+                        }
+                      ]
                     });
                 }}>Test event</div>
             </Card>
